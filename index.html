@@ -110,6 +110,7 @@ footer{text-align:center;color:var(--mut);font-size:.85em;padding:0 16px 30px}
   <!-- ===== ลอยกระทง ===== -->
   <section class="tab" id="tab-float">
     <div class="card" id="remind" hidden></div>
+    <div class="card" id="keep" hidden></div>
     <div class="card" id="count" style="text-align:center"></div>
     <div class="card" id="roomcard">
       <h2>ห้องของโฟร์กับดาว 💞</h2>
@@ -231,7 +232,7 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const rnd=(a,b)=>a+Math.random()*(b-a);
 const KEY='loykrathong.v1',NAMES='loykrathong.names';
 const PAL={pink:['#ff8fb7','#ffd6e6','ชมพู'],lilac:['#a58cff','#e4dcff','ม่วงลาเวนเดอร์'],white:['#f3efff','#ffffff','ขาว'],sun:['#ffc24d','#fff0b3','เหลืองทอง']};
-const COUPLE=['โฟร์','ดาว'],ROOM='loykrathong.room',SND='loykrathong.sound';
+const COUPLE=['โฟร์','ดาว'],ROOM='loykrathong.room',SND='loykrathong.sound',DEL='loykrathong.deleted',BAK='loykrathong.backup';
 const BASE={banana:[['#ecd7a4','#d9bd82','#c9a96a'],'หยวกกล้วย'],bread:[['#f0b46a','#d98f3f','#b8722c'],'ขนมปัง (ปลากินได้)'],coconut:[['#8a5a3a','#6b4228','#523120'],'กะลามะพร้าว (แบบกระทงสาย จ.ตาก)']};
 const DECO={heart:['♥','#e86f98','หัวใจ'],star:['★','#ffd479','ดาว'],moon:['☾','#fff1c9','พระจันทร์'],none:['','','ไม่มี']};
 // ถ้าเบราว์เซอร์บล็อก localStorage (เช่น private mode) จะเก็บไว้ในหน้าเว็บชั่วคราวแทน
@@ -330,6 +331,8 @@ $('#go').onclick=()=>{
   const t=Date.now();
   const r={id:t.toString(36)+Math.random().toString(36).slice(2,6),t,year:new Date(t).getFullYear(),a,b:'',wa:$('#wishA').value.trim(),wb:'',c:color,base,deco};
   const all=load();all.push(r);save(all);plop();pub(r);
+  navigator.storage&&navigator.storage.persist&&navigator.storage.persist().catch(()=>{}); // ขอไม่ให้เบราว์เซอร์ลบข้อมูลเอง
+  renderKeep();
   renderRiver();renderMemory();renderRemind();
   $('#wishA').value='';
   window.scrollTo({top:0,behavior:'smooth'});
@@ -363,23 +366,30 @@ $('#memlist').onclick=async e=>{
   if(im){try{const y=+im.dataset.img,b=await yearPNG(y),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`loykrathong-${y}.png`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}catch{toast('สร้างภาพไม่สำเร็จ')}return}
   const b=e.target.closest('[data-del]');if(!b)return;
   if(!confirm('ลบความทรงจำดวงนี้? (ถ้าไม่มีไฟล์สำรอง จะกู้คืนไม่ได้)'))return;
+  // จำ id ที่ลบไว้ ลิงก์/ห้องซิงก์จากแฟนจะได้ไม่เอากลับมาอีก (นำเข้าไฟล์สำรองยังกู้คืนได้)
+  const del=deleted();del.add(b.dataset.del);store.setItem(DEL,JSON.stringify([...del]));
   save(load().filter(r=>r.id!==b.dataset.del));renderMemory();renderRemind();renderRiver();
 };
+function deleted(){try{const v=JSON.parse(store.getItem(DEL));return new Set(Array.isArray(v)?v:[])}catch{return new Set}}
 
 /* ---------- สำรอง / นำเข้า / แชร์ลิงก์ ---------- */
-function merge(list){
-  const cur=load(),ids=new Set(cur.map(r=>r.id)),added=[];
+function merge(list,restore){
+  const cur=load(),ids=new Set(cur.map(r=>r.id)),added=[],del=deleted();
   for(const r of Array.isArray(list)?list:[]){
-    if(!r||typeof r!=='object'||!r.id||ids.has(String(r.id)))continue;
+    if(!r||typeof r!=='object'||!r.id)continue;
+    const id=String(r.id).slice(0,40);
+    if(ids.has(id))continue;
+    if(del.has(id)){if(!restore)continue;del.delete(id)}
     const t=+r.t||Date.now();
-    const x={id:String(r.id).slice(0,40),t,year:+r.year||new Date(t).getFullYear(),a:String(r.a||'').slice(0,40),b:String(r.b||'').slice(0,40),wa:String(r.wa||'').slice(0,200),wb:String(r.wb||'').slice(0,200),c:PAL[r.c]?r.c:'pink',base:BASE[r.base]?r.base:'banana',deco:DECO[r.deco]?r.deco:'heart'};
+    const x={id,t,year:+r.year||new Date(t).getFullYear(),a:String(r.a||'').slice(0,40),b:String(r.b||'').slice(0,40),wa:String(r.wa||'').slice(0,200),wb:String(r.wb||'').slice(0,200),c:PAL[r.c]?r.c:'pink',base:BASE[r.base]?r.base:'banana',deco:DECO[r.deco]?r.deco:'heart'};
     cur.push(x);ids.add(x.id);added.push(x);
   }
+  if(restore)store.setItem(DEL,JSON.stringify([...del]));
   save(cur);renderMemory();renderRemind();renderRiver();return added;
 }
 async function share(list,msg,url){
   const u=url||location.href.split('#')[0]+'#d='+btoa(unescape(encodeURIComponent(JSON.stringify(list))));
-  if(navigator.share){try{await navigator.share({title:'ลอยกระทงของเรา 🪷',text:url?'ชวนมาลอยกระทงด้วยกัน 💞':'กระทงของเรามาลอยข้างๆ แล้วนะ 💕',url:u})}catch{}return}
+  if(navigator.share){try{await navigator.share({title:'ลอยกระทงของเรา 🪷',text:url?'ชวนมาลอยกระทงด้วยกัน 💞':'กระทงของเรามาลอยข้างๆ แล้วนะ 💕',url:u});return}catch(e){if(e.name==='AbortError')return}} // แชร์ล้มด้วยเหตุอื่น → คัดลอกลิงก์แทน
   try{await navigator.clipboard.writeText(u);toast(msg)}catch{prompt('คัดลอกลิงก์นี้',u)}
 }
 $('#send').onclick=()=>{
@@ -390,12 +400,23 @@ $('#send').onclick=()=>{
 $('#exp').onclick=()=>{
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([JSON.stringify(load(),null,1)],{type:'application/json'}));
-  a.download='loykrathong-memories-'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(a.href);
+  a.download='loykrathong-memories-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+  store.setItem(BAK,String(new Date().getFullYear()));renderKeep();
 };
+// Safari บน iPhone ลบ localStorage ของเว็บที่ไม่ได้เปิด 7 วัน (ยกเว้นเว็บที่เพิ่มไว้หน้าจอหลัก) → เตือนให้เก็บไว้ให้ปลอดภัย
+function renderKeep(){
+  const y=new Date().getFullYear(),ios=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  const home=navigator.standalone||matchMedia('(display-mode: standalone)').matches;
+  const tips=[];
+  if(ios&&!home) tips.push('📱 บน iPhone กดปุ่มแชร์ แล้วเลือก <b>"เพิ่มไปยังหน้าจอหลัก"</b> แล้วเปิดเว็บจากไอคอนนั้น ไม่งั้น Safari จะลบความทรงจำเองถ้าไม่ได้เปิดเว็บเกิน 7 วัน');
+  if(load().some(r=>r.year===y)&&store.getItem(BAK)!==String(y)) tips.push('💾 ปีนี้ยังไม่ได้โหลดสำรองความทรงจำ <button class="btn" id="bakgo">โหลดสำรองเลย</button>');
+  const el=$('#keep');el.hidden=!tips.length;el.innerHTML=tips.map(t=>`<p style="margin:4px 0">${t}</p>`).join('');
+  const bg=$('#bakgo');if(bg)bg.onclick=()=>$('#exp').click();
+}
 $('#imp').onclick=()=>$('#file').click();
 $('#file').onchange=async e=>{
   const f=e.target.files[0];if(!f)return;
-  try{toast(`นำเข้าแล้ว ${merge(JSON.parse(await f.text())).length} ดวง`)}catch{toast('ไฟล์นี้อ่านไม่ได้')}
+  try{toast(`นำเข้าแล้ว ${merge(JSON.parse(await f.text()),true).length} ดวง`)}catch{toast('ไฟล์นี้อ่านไม่ได้')}
   e.target.value='';
 };
 $('#lnk').onclick=()=>share(load(),'คัดลอกลิงก์แล้ว ส่งให้แฟนเปิดได้เลย');
@@ -603,7 +624,7 @@ async function yearPNG(y){
   return new Promise(res=>c.toBlob(res,'image/png'));
 }
 
-drawPrev();renderRiver();renderMemory();renderRemind();renderCount();renderRoom();startSync();
+drawPrev();renderRiver();renderMemory();renderRemind();renderCount();renderRoom();renderKeep();startSync();
 </script>
 </body>
 </html>
