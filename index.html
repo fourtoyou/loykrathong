@@ -33,7 +33,10 @@ button,input,textarea{font:inherit;color:inherit}
 .k{position:absolute;width:var(--w);filter:drop-shadow(0 0 10px rgba(255,200,110,.55));animation:drift var(--d) linear var(--dl) infinite,bob 3.2s ease-in-out infinite}
 .k svg{display:block;width:100%}
 .k.past{--w:64px;opacity:.7}
-.k.new{--w:112px;animation:drift 28s linear forwards,bob 3.2s ease-in-out infinite}
+.pair{position:absolute;display:flex;gap:2px;align-items:flex-end;animation:drift 45s linear infinite}
+.pair .k{position:static;--w:96px;animation:bob 3.2s ease-in-out infinite}
+.pair .k:nth-child(2n){animation-delay:-1.6s}
+.k small{display:block;text-align:center;font-size:12px;line-height:1.3;color:#fff1c9;text-shadow:0 1px 3px #000}
 @keyframes drift{from{left:-18%}to{left:104%}}
 @keyframes bob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-4px) rotate(2deg)}}
 .flame{transform-box:fill-box;transform-origin:50% 100%;animation:fl 1.3s ease-in-out infinite}
@@ -76,7 +79,7 @@ details ul{margin:6px 0;padding-left:20px}
 #toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:#fff;color:#2a1b5e;padding:11px 20px;border-radius:999px;opacity:0;pointer-events:none;transition:.3s;max-width:90vw;text-align:center;z-index:9}
 #toast.on{opacity:1;transform:translate(-50%,0)}
 footer{text-align:center;color:var(--mut);font-size:.85em;padding:0 16px 30px}
-@media(prefers-reduced-motion:reduce){*{animation:none!important}.k{left:var(--x)}.k.new{left:40%}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}.k{left:var(--x)}.pair{left:30%}}
 </style>
 </head>
 <body>
@@ -104,17 +107,16 @@ footer{text-align:center;color:var(--mut);font-size:.85em;padding:0 16px 30px}
       <div class="prev" id="prev" aria-label="ตัวอย่างกระทง"></div>
       <div>
         <div class="row2">
-          <div><label for="nameA">ชื่อคนที่ 1</label><input id="nameA" maxlength="30" autocomplete="off"></div>
-          <div><label for="nameB">ชื่อคนที่ 2</label><input id="nameB" maxlength="30" autocomplete="off"></div>
+          <div><label for="nameA">ชื่อเรา</label><input id="nameA" maxlength="30" autocomplete="off"></div>
+          <div><label for="nameB">ชื่อแฟน</label><input id="nameB" maxlength="30" autocomplete="off"></div>
         </div>
         <label>สีดอกไม้ของกระทง</label>
         <div class="sws" id="sws"></div>
-        <label for="wishA">พรของคนที่ 1</label>
+        <label for="wishA">พรของเรา</label>
         <textarea id="wishA" maxlength="200" placeholder="ขออะไรดี… หรืออยากปล่อยอะไรไปกับสายน้ำ"></textarea>
-        <label for="wishB">พรของคนที่ 2</label>
-        <textarea id="wishB" maxlength="200" placeholder="ขออะไรดี… หรืออยากปล่อยอะไรไปกับสายน้ำ"></textarea>
-        <button class="go" id="go">🕯️ ลอยกระทงด้วยกัน</button>
-        <p class="mut" style="margin:8px 0 0">กดแล้วกระทงจะลอยอยู่บนแม่น้ำด้านบน และถูกเก็บไว้ในสมุดความทรงจำของปีนี้</p>
+        <button class="go" id="go">🕯️ ลอยกระทงของเรา</button>
+        <button class="btn" id="send" style="width:100%;margin-top:8px">💌 ส่งกระทงไปลอยข้างแฟน</button>
+        <p class="mut" style="margin:8px 0 0">ลอยคนละเครื่องได้เลย ลอยเสร็จกดส่งลิงก์ให้แฟนในแชต พอแฟนเปิดลิงก์ กระทงของเราจะไปลอยคู่กับกระทงของเขา แล้วให้เขาส่งของเขากลับมาด้วยนะ</p>
       </div>
     </div>
     <div class="card">
@@ -246,28 +248,32 @@ function kSVG(c){
 $('#sky').innerHTML=Array.from({length:70},()=>`<i style="left:${rnd(0,100)}%;top:${rnd(0,58)}%;--s:${rnd(1,2.6)}px;animation-delay:${rnd(0,4)}s"></i>`).join('');
 $('#lanterns').innerHTML=Array.from({length:7},()=>`<div class="ln" style="--x:${rnd(5,95)}%;--d:${rnd(18,34)}s;--dl:-${rnd(0,30)}s;--sw:${rnd(-40,40)}px"></div>`).join('');
 
-const floating=new Set();
-function kEl(r,cls){
+// กระทงแบบเก่า (เวอร์ชันแรก) มีสองชื่อในดวงเดียว: a & b
+const who=r=>r.b?`${r.a} & ${r.b}`:r.a;
+const wishes=r=>`<p>💭 <b>${esc(r.a)}</b>: ${esc(r.wa||'—')}</p>`+(r.b?`<p>💭 <b>${esc(r.b)}</b>: ${esc(r.wb||'—')}</p>`:'');
+function kEl(r,cls,label){
   const d=document.createElement('div');
-  d.className='k '+cls;d.dataset.id=r.id;d.style.setProperty('--x',rnd(8,80)+'%');
-  d.innerHTML=kSVG(r.c);return d;
+  d.className='k '+cls;d.style.setProperty('--x',rnd(8,80)+'%');
+  d.innerHTML=kSVG(r.c)+(label?`<small>${esc(label)}</small>`:'');return d;
 }
 function renderRiver(){
-  const river=$('#river');$$('#river .past').forEach(e=>e.remove());
-  let list=load().sort((a,b)=>b.t-a.t).filter(r=>!floating.has(r.id)).slice(0,12);
-  if(!list.length) list=[{id:'d1',c:'pink'},{id:'d2',c:'lilac'}]; // ตัวอย่างตอนยังไม่มีกระทงจริง
-  list.forEach((r,i)=>{
+  const river=$('#river'),y=new Date().getFullYear(),all=load().sort((a,b)=>b.t-a.t);
+  river.innerHTML='';
+  let past=all.filter(r=>r.year!==y).slice(0,12);
+  if(!all.length) past=[{c:'pink'},{c:'lilac'}]; // ตัวอย่างตอนยังไม่มีกระทงจริง
+  past.forEach(r=>{
     const d=kEl(r,'past'),b=rnd(5,26);
     d.style.bottom=b+'%';d.style.zIndex=100-Math.round(b);
     d.style.setProperty('--d',rnd(55,90)+'s');d.style.setProperty('--dl','-'+rnd(0,70)+'s');
     river.appendChild(d);
   });
-}
-function floatNew(r){
-  floating.add(r.id);
-  const d=kEl(r,'new');d.style.bottom='9%';d.style.zIndex=200;
-  d.addEventListener('animationend',e=>{if(e.animationName==='drift'){d.remove();floating.delete(r.id);renderRiver()}});
-  $('#river').appendChild(d);
+  // กระทงปีนี้ของทั้งสองคน ลอยคู่กันแถวหน้า (สร้างใหม่ทุกครั้ง = เริ่มลอยจากฝั่งซ้ายใหม่)
+  const now=all.filter(r=>r.year===y).slice(0,4).reverse();
+  if(now.length){
+    const g=document.createElement('div');g.className='pair';g.style.bottom='6%';g.style.zIndex=200;
+    now.forEach(r=>g.appendChild(kEl(r,'',who(r))));
+    river.appendChild(g);
+  }
 }
 
 /* ---------- ฟอร์มทำกระทง ---------- */
@@ -285,22 +291,22 @@ $('#nameA').oninput=$('#nameB').oninput=names;names();
 
 $('#go').onclick=()=>{
   const a=$('#nameA').value.trim(),b=$('#nameB').value.trim();
-  if(!a||!b){toast('ใส่ชื่อของทั้งสองคนก่อนนะ');return}
+  if(!a){toast('ใส่ชื่อเราก่อนนะ');return}
   const t=Date.now();
-  const r={id:t.toString(36)+Math.random().toString(36).slice(2,6),t,year:new Date(t).getFullYear(),a,b,wa:$('#wishA').value.trim(),wb:$('#wishB').value.trim(),c:color};
+  const r={id:t.toString(36)+Math.random().toString(36).slice(2,6),t,year:new Date(t).getFullYear(),a,b:'',wa:$('#wishA').value.trim(),wb:'',c:color};
   const all=load();all.push(r);save(all);
-  floatNew(r);renderMemory();renderRemind();
-  $('#wishA').value=$('#wishB').value='';
+  renderRiver();renderMemory();renderRemind();
+  $('#wishA').value='';
   window.scrollTo({top:0,behavior:'smooth'});
-  toast(`ลอยแล้ว ✨ ขอให้พรของ ${a} และ ${b} เป็นจริงนะ`);
+  toast(`ลอยแล้ว ✨ กด "ส่งกระทงไปลอยข้างแฟน" ให้${b||'แฟน'}เห็นด้วยนะ`);
 };
 
 /* ---------- ปีที่แล้วเราขออะไร ---------- */
 function renderRemind(){
   const y=new Date().getFullYear();
-  const r=load().filter(x=>x.year<y).sort((p,q)=>q.t-p.t)[0],el=$('#remind');
-  el.hidden=!r;
-  if(r) el.innerHTML=`<h2>🌟 ปี ${r.year} เราขอพรไว้ว่า…</h2><p>💭 ${esc(r.a)}: ${esc(r.wa||'—')}</p><p>💭 ${esc(r.b)}: ${esc(r.wb||'—')}</p><p class="mut" style="margin-bottom:0">ปีนี้สมหวังไหมนะ? ลองเล่าให้กันฟังนะ</p>`;
+  const old=load().filter(x=>x.year<y),py=Math.max(...old.map(x=>x.year)),el=$('#remind');
+  el.hidden=!old.length;
+  if(old.length) el.innerHTML=`<h2>🌟 ปี ${esc(py)} เราขอพรไว้ว่า…</h2>${old.filter(x=>x.year===py).map(wishes).join('')}<p class="mut" style="margin-bottom:0">ปีนี้สมหวังไหมนะ? ลองเล่าให้กันฟังนะ</p>`;
 }
 
 /* ---------- สมุดความทรงจำ ---------- */
@@ -313,8 +319,7 @@ function renderMemory(){
     const d=new Date(r.t).toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric'});
     h+=`<div class="card mem"><div>${kSVG(r.c)}</div><div>
       <button class="btn del" data-del="${esc(r.id)}">ลบ</button>
-      <h3>${esc(r.a)} &amp; ${esc(r.b)}</h3><p class="mut">${esc(d)}</p>
-      <p>💭 <b>${esc(r.a)}</b>: ${esc(r.wa||'—')}</p><p>💭 <b>${esc(r.b)}</b>: ${esc(r.wb||'—')}</p></div></div>`;
+      <h3>${esc(who(r))}</h3><p class="mut">${esc(d)}</p>${wishes(r)}</div></div>`;
   }
   $('#memlist').innerHTML=h;
 }
@@ -326,15 +331,25 @@ $('#memlist').onclick=e=>{
 
 /* ---------- สำรอง / นำเข้า / แชร์ลิงก์ ---------- */
 function merge(list){
-  const cur=load(),ids=new Set(cur.map(r=>r.id));let n=0;
+  const cur=load(),ids=new Set(cur.map(r=>r.id)),added=[];
   for(const r of Array.isArray(list)?list:[]){
     if(!r||typeof r!=='object'||!r.id||ids.has(String(r.id)))continue;
     const t=+r.t||Date.now();
-    cur.push({id:String(r.id).slice(0,40),t,year:+r.year||new Date(t).getFullYear(),a:String(r.a||'').slice(0,40),b:String(r.b||'').slice(0,40),wa:String(r.wa||'').slice(0,200),wb:String(r.wb||'').slice(0,200),c:PAL[r.c]?r.c:'pink'});
-    ids.add(String(r.id));n++;
+    const x={id:String(r.id).slice(0,40),t,year:+r.year||new Date(t).getFullYear(),a:String(r.a||'').slice(0,40),b:String(r.b||'').slice(0,40),wa:String(r.wa||'').slice(0,200),wb:String(r.wb||'').slice(0,200),c:PAL[r.c]?r.c:'pink'};
+    cur.push(x);ids.add(x.id);added.push(x);
   }
-  save(cur);renderMemory();renderRemind();renderRiver();return n;
+  save(cur);renderMemory();renderRemind();renderRiver();return added;
 }
+async function share(list,msg){
+  const u=location.href.split('#')[0]+'#d='+btoa(unescape(encodeURIComponent(JSON.stringify(list))));
+  if(navigator.share){try{await navigator.share({title:'ลอยกระทงของเรา 🪷',text:'กระทงของเรามาลอยข้างๆ แล้วนะ 💕',url:u})}catch{}return}
+  try{await navigator.clipboard.writeText(u);toast(msg)}catch{prompt('คัดลอกลิงก์นี้',u)}
+}
+$('#send').onclick=()=>{
+  const mine=load().filter(r=>r.year===new Date().getFullYear());
+  if(!mine.length){toast('ลอยกระทงของเราก่อนนะ');return}
+  share(mine,'คัดลอกลิงก์แล้ว ส่งให้แฟนในแชตได้เลย 💌');
+};
 $('#exp').onclick=()=>{
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([JSON.stringify(load(),null,1)],{type:'application/json'}));
@@ -343,17 +358,20 @@ $('#exp').onclick=()=>{
 $('#imp').onclick=()=>$('#file').click();
 $('#file').onchange=async e=>{
   const f=e.target.files[0];if(!f)return;
-  try{toast(`นำเข้าแล้ว ${merge(JSON.parse(await f.text()))} ดวง`)}catch{toast('ไฟล์นี้อ่านไม่ได้')}
+  try{toast(`นำเข้าแล้ว ${merge(JSON.parse(await f.text())).length} ดวง`)}catch{toast('ไฟล์นี้อ่านไม่ได้')}
   e.target.value='';
 };
-$('#lnk').onclick=async()=>{
-  const u=location.href.split('#')[0]+'#d='+btoa(unescape(encodeURIComponent(JSON.stringify(load()))));
-  try{await navigator.clipboard.writeText(u);toast('คัดลอกลิงก์แล้ว ส่งให้แฟนเปิดได้เลย')}catch{prompt('คัดลอกลิงก์นี้',u)}
-};
+$('#lnk').onclick=()=>share(load(),'คัดลอกลิงก์แล้ว ส่งให้แฟนเปิดได้เลย');
 if(location.hash.startsWith('#d=')){
   try{
     const list=JSON.parse(decodeURIComponent(escape(atob(location.hash.slice(3)))));
-    if(confirm(`มีความทรงจำที่แชร์มา ${list.length} ดวง รวมเข้าสมุดของเครื่องนี้ไหม?`)) toast(`รวมแล้ว ${merge(list)} ดวงใหม่`);
+    if(!Array.isArray(list)) throw 0;
+    const from=[...new Set(list.map(r=>r&&r.a).filter(Boolean))].join(', ')||'แฟน';
+    if(confirm(`${from} ส่งกระทงมาให้ เอามาลอยไว้ด้วยกันไหม? 🪷`)){
+      const got=merge(list),me=$('#nameA').value.trim(),o=got.find(r=>r.a&&r.a!==me);
+      if(o&&!$('#nameB').value.trim()){$('#nameB').value=o.a.slice(0,30);names()}
+      toast(got.length?`กระทงของ ${from} ลอยมาอยู่ข้างๆ แล้ว 💕`:'กระทงนี้ลอยอยู่ในแม่น้ำของเราแล้ว');
+    }
   }catch{toast('ลิงก์ความทรงจำเสีย อ่านไม่ได้')}
   history.replaceState(null,'',location.pathname+location.search);
 }
