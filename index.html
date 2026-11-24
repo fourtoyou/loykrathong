@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ลอยกระทงของเรา ✿</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mali:wght@400;600&family=Noto+Sans+Thai:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#120d33;--card:rgba(255,255,255,.07);--line:rgba(255,255,255,.15);--pink:#ff9cc2;--gold:#ffd479;--txt:#f4efff;--mut:#bdb3e0}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;color:var(--txt);background:radial-gradient(1200px 600px at 50% -10%,#2b1f6b,transparent),var(--bg);font:16px/1.7 'Noto Sans Thai','Sarabun',system-ui,sans-serif}
+h1,h2,h3,.fancy{font-family:'Mali','Noto Sans Thai',cursive;margin:0}
+button,input,textarea{font:inherit;color:inherit}
+
+/* ---------- hero: แม่น้ำยามค่ำคืน ---------- */
+.hero{position:relative;height:clamp(300px,52vh,440px);overflow:hidden;background:linear-gradient(#150f3d 0%,#2d2275 45%,#8a4f9e 62%,#1d1650 62.1%,#120d33 100%)}
+.sky i{position:absolute;border-radius:50%;background:#fff;width:var(--s);height:var(--s);animation:tw 3s ease-in-out infinite}
+@keyframes tw{0%,100%{opacity:.15}50%{opacity:1}}
+.moon{position:absolute;top:11%;right:13%;width:64px;height:64px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fffbe8,#ffe9a8);box-shadow:0 0 40px 14px rgba(255,235,170,.35)}
+.reflect{position:absolute;top:0;right:calc(13% + 22px);width:20px;height:100%;background:linear-gradient(rgba(255,235,170,.4),transparent);filter:blur(5px)}
+.title{position:absolute;left:0;right:0;top:14%;text-align:center;padding:0 16px;text-shadow:0 0 22px rgba(255,170,220,.7)}
+.title h1{font-size:clamp(30px,6vw,52px);font-weight:600}
+.title p{margin:4px 0 0;color:#fff1c9}
+.water{position:absolute;left:0;right:0;bottom:0;height:38%;overflow:hidden}
+.water::before,.water::after{content:"";position:absolute;inset:0;background-repeat:repeat-x;
+ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='20'%3E%3Cpath d='M0 10Q30 0 60 10T120 10' fill='none' stroke='rgba(255,255,255,.14)' stroke-width='2'/%3E%3C/svg%3E")}
+.water::before{background-position:0 25%;animation:wv 14s linear infinite}
+.water::after{background-position:0 70%;background-size:180px 30px;animation:wv 22s linear infinite reverse}
+@keyframes wv{to{background-position-x:240px}}
+.river{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.k{position:absolute;width:var(--w);filter:drop-shadow(0 0 10px rgba(255,200,110,.55));animation:drift var(--d) linear var(--dl) infinite,bob 3.2s ease-in-out infinite}
+.k svg{display:block;width:100%}
+.k.past{--w:64px;opacity:.7}
+.k.new{--w:112px;animation:drift 28s linear forwards,bob 3.2s ease-in-out infinite}
+@keyframes drift{from{left:-18%}to{left:104%}}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-4px) rotate(2deg)}}
+.flame{transform-box:fill-box;transform-origin:50% 100%;animation:fl 1.3s ease-in-out infinite}
+@keyframes fl{0%,100%{transform:scale(1,1)}30%{transform:scale(.9,1.12)}60%{transform:scale(1.06,.94)}}
+.ln{position:absolute;bottom:34%;left:var(--x);width:14px;height:18px;border-radius:40% 40% 30% 30%;background:linear-gradient(#ffe29a,#ff9f4a);box-shadow:0 0 14px 4px rgba(255,170,70,.55);opacity:0;animation:rise var(--d) linear var(--dl) infinite}
+@keyframes rise{0%{transform:translate(0,0);opacity:0}10%{opacity:.9}100%{transform:translate(var(--sw),-380px);opacity:0}}
+
+/* ---------- เนื้อหา ---------- */
+main{max-width:920px;margin:0 auto;padding:18px 16px 60px}
+.tabs{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:6px 0 20px}
+.tabs button{cursor:pointer;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:8px 18px}
+.tabs button[aria-selected=true]{background:linear-gradient(135deg,#ff8fb7,#a58cff);border-color:transparent;color:#1a1040;font-weight:600}
+.tab[hidden]{display:none}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;margin-bottom:16px}
+.mut{color:var(--mut);font-size:.92em}
+.build{display:grid;grid-template-columns:minmax(200px,280px) 1fr;gap:18px;align-items:start}
+@media(max-width:680px){.build{grid-template-columns:1fr}}
+.prev{background:radial-gradient(circle at 50% 70%,rgba(255,190,110,.25),transparent 65%);border-radius:16px;padding:14px 8px;filter:drop-shadow(0 0 14px rgba(255,200,110,.5))}
+.prev svg{width:100%;display:block}
+label{display:block;font-size:.9em;color:var(--mut);margin:10px 0 4px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+input,textarea{width:100%;background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:12px;padding:9px 12px}
+textarea{resize:vertical;min-height:70px}
+input:focus,textarea:focus,button:focus-visible{outline:2px solid var(--pink);outline-offset:1px}
+.sws{display:flex;gap:10px}
+.sw{width:34px;height:34px;border-radius:50%;border:2px solid transparent;cursor:pointer}
+.sw[aria-pressed=true]{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.25)}
+.go{margin-top:14px;width:100%;cursor:pointer;border:0;border-radius:999px;padding:12px;font-weight:600;font-size:1.05em;color:#1a1040;background:linear-gradient(135deg,#ffd479,#ff9cc2)}
+.btn{cursor:pointer;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:7px 14px}
+.btn:hover{background:rgba(255,255,255,.14)}
+.yr{margin:22px 0 10px;color:var(--gold)}
+.mem{display:grid;grid-template-columns:110px 1fr;gap:14px;align-items:center}
+.mem svg{width:100%;filter:drop-shadow(0 0 8px rgba(255,200,110,.45))}
+.mem p{margin:2px 0}
+.del{float:right;font-size:.8em}
+details.card summary{cursor:pointer;font-weight:600;font-family:'Mali','Noto Sans Thai',cursive}
+details.card[open] summary{margin-bottom:8px}
+details ul{margin:6px 0;padding-left:20px}
+.q{font-size:1.15em;text-align:center;padding:10px 4px;font-family:'Mali','Noto Sans Thai',cursive}
+#toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:#fff;color:#2a1b5e;padding:11px 20px;border-radius:999px;opacity:0;pointer-events:none;transition:.3s;max-width:90vw;text-align:center;z-index:9}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+footer{text-align:center;color:var(--mut);font-size:.85em;padding:0 16px 30px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}.k{left:var(--x)}.k.new{left:40%}}
+</style>
+</head>
+<body>
+
+<section class="hero" aria-label="แม่น้ำยามค่ำคืน">
+  <div class="sky" id="sky"></div>
+  <div class="moon"></div>
+  <div id="lanterns"></div>
+  <div class="title"><h1>ลอยกระทงของเรา</h1><p id="sub">คืนวันเพ็ญ เดือน ๑๒ ✿</p></div>
+  <div class="water"><div class="reflect"></div></div>
+  <div class="river" id="river"></div>
+</section>
+
+<main>
+  <nav class="tabs" role="tablist">
+    <button role="tab" data-tab="float" aria-selected="true">🪷 ลอยกระทง</button>
+    <button role="tab" data-tab="memory" aria-selected="false">📖 สมุดความทรงจำ</button>
+    <button role="tab" data-tab="learn" aria-selected="false">🌙 ประเพณีไทย</button>
+  </nav>
+
+  <!-- ===== ลอยกระทง ===== -->
+  <section class="tab" id="tab-float">
+    <div class="card" id="remind" hidden></div>
+    <div class="card build">
+      <div class="prev" id="prev" aria-label="ตัวอย่างกระทง"></div>
+      <div>
+        <div class="row2">
+          <div><label for="nameA">ชื่อคนที่ 1</label><input id="nameA" maxlength="30" autocomplete="off"></div>
+          <div><label for="nameB">ชื่อคนที่ 2</label><input id="nameB" maxlength="30" autocomplete="off"></div>
+        </div>
+        <label>สีดอกไม้ของกระทง</label>
+        <div class="sws" id="sws"></div>
+        <label for="wishA">พรของคนที่ 1</label>
+        <textarea id="wishA" maxlength="200" placeholder="ขออะไรดี… หรืออยากปล่อยอะไรไปกับสายน้ำ"></textarea>
+        <label for="wishB">พรของคนที่ 2</label>
+        <textarea id="wishB" maxlength="200" placeholder="ขออะไรดี… หรืออยากปล่อยอะไรไปกับสายน้ำ"></textarea>
+        <button class="go" id="go">🕯️ ลอยกระทงด้วยกัน</button>
+        <p class="mut" style="margin:8px 0 0">กดแล้วกระทงจะลอยอยู่บนแม่น้ำด้านบน และถูกเก็บไว้ในสมุดความทรงจำของปีนี้</p>
+      </div>
+    </div>
+    <div class="card">
+      <h2>💬 การ์ดชวนคุยคืนลอยกระทง</h2>
+      <div class="q" id="q">กดปุ่มเพื่อสุ่มคำถามให้คุยกัน</div>
+      <div style="text-align:center"><button class="btn" id="qbtn">สุ่มคำถาม</button></div>
+    </div>
+  </section>
+
+  <!-- ===== สมุดความทรงจำ ===== -->
+  <section class="tab" id="tab-memory" hidden>
+    <div class="card">
+      <p style="margin-top:0">ความทรงจำเก็บอยู่ในเบราว์เซอร์ของเครื่องนี้ ถ้าล้างข้อมูลเบราว์เซอร์จะหาย <b>แนะนำให้กดโหลดสำรองทุกปี</b> เก็บไว้ในไดรฟ์หรือส่งให้กันทางแชต</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn" id="exp">⬇️ โหลดสำรอง</button>
+        <button class="btn" id="imp">⬆️ นำเข้าไฟล์สำรอง</button>
+        <button class="btn" id="lnk">🔗 คัดลอกลิงก์ส่งให้แฟน</button>
+        <input type="file" id="file" accept="application/json,.json" hidden>
+      </div>
+    </div>
+    <div id="memlist"></div>
+  </section>
+
+  <!-- ===== ประเพณี ===== -->
+  <section class="tab" id="tab-learn" hidden>
+    <details class="card" open><summary>🪷 ลอยกระทงคืออะไร</summary>
+      <p>จัดในคืนวันเพ็ญ <b>ขึ้น ๑๕ ค่ำ เดือน ๑๒</b> (ราวเดือนตุลาคม–พฤศจิกายน) ช่วงน้ำเต็มตลิ่ง คนไทยลอยกระทงเพื่อ</p>
+      <ul>
+        <li>ขอขมาและขอบคุณ <b>พระแม่คงคา</b> ที่ให้น้ำใช้น้ำกิน และขอโทษที่เราทำให้น้ำสกปรก</li>
+        <li>บูชา <b>รอยพระพุทธบาท</b> ที่หาดทรายริมแม่น้ำนัมมทา (ตามความเชื่อทางพุทธ)</li>
+        <li>ปล่อยเรื่องไม่ดี ความโกรธ ความทุกข์ ให้ลอยไปกับสายน้ำ แล้วเริ่มต้นใหม่</li>
+      </ul>
+      <p class="mut">ปีนี้ตรงกับวันที่ 24 พฤศจิกายน 2026 ส่วนวันที่ปีหน้าให้เช็กปฏิทินอีกที เพราะเดือนไทยเป็นปฏิทินจันทรคติ วันเลยเลื่อนไปทุกปี</p>
+    </details>
+    <details class="card"><summary>👸 ตำนานนางนพมาศ</summary>
+      <p>ตามตำนาน <b>นางนพมาศ</b> สนมในสมัยสุโขทัย ประดิษฐ์กระทงเป็นรูปดอกบัวถวายพระร่วงเจ้า จึงเล่าต่อกันมาว่าเป็นต้นกำเนิดกระทงรูปดอกบัว แต่นักประวัติศาสตร์เชื่อว่าเรื่องเล่านี้ถูกเขียนขึ้นภายหลังยุคสุโขทัย ให้ถือเป็นตำนานที่สวยงามมากกว่าหลักฐานแน่นอน</p>
+    </details>
+    <details class="card"><summary>🌿 กระทงมีอะไรบ้าง ความหมายคืออะไร</summary>
+      <ul>
+        <li><b>ฐาน</b> ทำจากหยวกกล้วยหรือท่อนกล้วย ลอยน้ำได้และย่อยสลายเอง</li>
+        <li><b>ใบตอง</b> พับเป็นกลีบ เหมือนกลีบดอกบัว</li>
+        <li><b>ดอกไม้</b> ประดับให้สวย เป็นการบูชา</li>
+        <li><b>ธูป ๓ ดอก</b> แทนพระรัตนตรัย (พุทธ ธรรม สงฆ์)</li>
+        <li><b>เทียน ๑ เล่ม</b> แทนแสงสว่างแห่งปัญญา</li>
+        <li>บางคนใส่เส้นผมหรือเล็บ เป็นสัญลักษณ์ว่าทิ้งสิ่งไม่ดีไป</li>
+      </ul>
+    </details>
+    <details class="card"><summary>♻️ ลอยยังไงให้น้ำไม่เสีย</summary>
+      <ul>
+        <li>ใช้วัสดุธรรมชาติทั้งหมด <b>ไม่ใช้โฟม</b> เพราะย่อยสลายไม่ได้</li>
+        <li>ไม่ใช้ลวดเย็บกระดาษ ตะปู หรือเข็มหมุด</li>
+        <li>ไม่ใส่เหรียญ ถ้าอยากทำบุญให้ใส่ตู้บริจาค</li>
+        <li>มีกระทงขนมปังที่ปลากินได้ และจุดลอยกระทงออนไลน์ ซึ่งเก๋ไม่แพ้กัน</li>
+        <li>ลอยในจุดที่จัดไว้ แล้วช่วยเก็บขยะกลับไปด้วย</li>
+      </ul>
+    </details>
+    <details class="card"><summary>🏮 ยี่เป็ง ล้านนาเชียงใหม่</summary>
+      <p>ชาวล้านนานับเดือนช้ากว่าภาคกลาง ๑ เดือน เดือน ๑๒ ของภาคกลางจึงเป็น <b>เดือนยี่</b> (เดือน ๒) ของล้านนา คำว่า <b>ยี่เป็ง</b> คือ "วันเพ็ญเดือนยี่" ภาพจำคือโคมไฟกระดาษหลายพันดวงลอยขึ้นฟ้า และโคมแขวนประดับตามบ้านและวัด เป็นการบูชาและปล่อยทุกข์โศกขึ้นสู่ฟ้า</p>
+      <p class="mut">ปัจจุบันหลายพื้นที่จำกัดเวลาและสถานที่ปล่อยโคม เพราะอยู่ใกล้เส้นทางการบิน ถ้าไปเที่ยวให้เช็กประกาศของจังหวัดก่อน</p>
+    </details>
+    <details class="card"><summary>🗺️ ลอยกระทงแต่ละที่ ไม่เหมือนกัน</summary>
+      <ul>
+        <li><b>สุโขทัย</b> งาน "เผาเทียนเล่นไฟ" ที่อุทยานประวัติศาสตร์ ถือเป็นต้นตำนาน</li>
+        <li><b>ตาก</b> "กระทงสาย" กะลามะพร้าวเล็กๆ ผูกเป็นสายยาวลอยตามแม่น้ำปิง</li>
+        <li><b>เชียงใหม่</b> ยี่เป็ง โคมลอย โคมแขวน และขบวนแห่ล้านนา</li>
+        <li><b>กรุงเทพฯ</b> ลอยตามริมแม่น้ำเจ้าพระยา สวนสาธารณะ และสระน้ำ</li>
+      </ul>
+    </details>
+    <details class="card"><summary>📅 ประเพณีไทยตลอดปี</summary>
+      <ul>
+        <li><b>กุมภาพันธ์</b> มาฆบูชา วันเพ็ญเดือน ๓ เวียนเทียนที่วัด</li>
+        <li><b>กุมภาพันธ์</b> ตรุษจีน ไหว้บรรพบุรุษ อั่งเปา สีแดงมงคล</li>
+        <li><b>เมษายน</b> สงกรานต์ ๑๓–๑๕ เมษายน ปีใหม่ไทย รดน้ำดำหัวผู้ใหญ่ ก่อพระทราย</li>
+        <li><b>พฤษภาคม</b> พืชมงคลและแรกนาขวัญ พิธีเริ่มฤดูทำนา, บุญบั้งไฟ (อีสาน) ขอฝน</li>
+        <li><b>พฤษภาคม–มิถุนายน</b> วิสาขบูชา วันประสูติ ตรัสรู้ ปรินิพพาน เวียนเทียนและทำบุญ</li>
+        <li><b>มิถุนายน</b> ผีตาโขน จังหวัดเลย ใส่หน้ากากสีสันสดใส</li>
+        <li><b>กรกฎาคม</b> อาสาฬหบูชาและเข้าพรรษา, แห่เทียนพรรษา (อุบลราชธานี)</li>
+        <li><b>ตุลาคม</b> ออกพรรษา ตักบาตรเทโว, เทศกาลกินเจ ๙ วัน (ภูเก็ตดังมาก)</li>
+        <li><b>พฤศจิกายน</b> ลอยกระทง / ยี่เป็ง 🪷 (วันนี้!)</li>
+      </ul>
+      <p class="mut">วันที่ของงานตามจันทรคติเปลี่ยนทุกปี เช็กปฏิทินก่อนไปเสมอ</p>
+    </details>
+  </section>
+</main>
+
+<footer>ทำด้วยความรัก ✿ ลอยจริงให้ใช้วัสดุธรรมชาติ แล้วอย่าลืมเก็บขยะกลับนะ</footer>
+<div id="toast" role="status"></div>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const rnd=(a,b)=>a+Math.random()*(b-a);
+const KEY='loykrathong.v1',NAMES='loykrathong.names';
+const PAL={pink:['#ff8fb7','#ffd6e6','ชมพู'],lilac:['#a58cff','#e4dcff','ม่วงลาเวนเดอร์'],white:['#f3efff','#ffffff','ขาว'],sun:['#ffc24d','#fff0b3','เหลืองทอง']};
+// ถ้าเบราว์เซอร์บล็อก localStorage (เช่น private mode) จะเก็บไว้ในหน้าเว็บชั่วคราวแทน
+const store=(()=>{try{localStorage.setItem('_t','1');return localStorage}catch{const m={};return{getItem:k=>m[k]??null,setItem:(k,v)=>{m[k]=String(v)}}}})();
+const load=()=>{try{const v=JSON.parse(store.getItem(KEY));return Array.isArray(v)?v:[]}catch{return[]}};
+const save=v=>store.setItem(KEY,JSON.stringify(v));
+let toastT;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),4500)}
+
+/* ---------- กระทง (SVG) ---------- */
+function kSVG(c){
+  const [p,q]=PAL[c]||PAL.pink;
+  let leaf='',pet='',inn='';
+  for(let a=-66;a<=66;a+=22) leaf+=`<path transform="rotate(${a} 100 120)" d="M100 120C86 98 92 70 100 56C108 70 114 98 100 120Z" fill="#4fae6a" stroke="#2f8049" stroke-width="1.2"/>`;
+  for(let a=-55;a<=55;a+=22){
+    pet+=`<path transform="rotate(${a} 100 120)" d="M100 120C90 104 94 84 100 74C106 84 110 104 100 120Z" fill="${p}"/>`;
+    inn+=`<path transform="rotate(${a} 100 120)" d="M100 120C95 108 97 94 100 88C103 94 105 108 100 120Z" fill="${q}"/>`;
+  }
+  return `<svg viewBox="0 14 200 142" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="กระทง">
+  <ellipse cx="100" cy="134" rx="72" ry="17" fill="#c9a96a"/>
+  <rect x="28" y="120" width="144" height="14" fill="#d9bd82"/>
+  <ellipse cx="100" cy="120" rx="72" ry="17" fill="#ecd7a4"/>
+  <ellipse cx="100" cy="120" rx="52" ry="11" fill="none" stroke="#c9a96a" stroke-width="1.5"/>
+  ${leaf}
+  <path d="M84 114L70 54M116 114L130 54" stroke="#8a5a2b" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="70" cy="54" r="2.4" fill="#ff5a3c"/><circle cx="130" cy="54" r="2.4" fill="#ff5a3c"/>
+  <rect x="95" y="46" width="10" height="68" rx="2" fill="#fff6dc"/>
+  ${pet}${inn}
+  <path class="flame" d="M100 24C94 33 93 40 100 45C107 40 106 33 100 24Z" fill="#ffd45e"/>
+  <path class="flame" d="M100 33C97.5 37 97.5 40 100 42C102.5 40 102.5 37 100 33Z" fill="#fff4c4"/>
+  <text x="100" y="131" text-anchor="middle" font-size="11" fill="#e86f98">♥</text>
+  <circle cx="38" cy="124" r="4" fill="${p}"/><circle cx="46" cy="130" r="3" fill="${q}"/>
+  <circle cx="162" cy="124" r="4" fill="${p}"/><circle cx="154" cy="130" r="3" fill="${q}"/>
+  </svg>`;
+}
+
+/* ---------- ฉาก: ดาว โคม แม่น้ำ ---------- */
+$('#sky').innerHTML=Array.from({length:70},()=>`<i style="left:${rnd(0,100)}%;top:${rnd(0,58)}%;--s:${rnd(1,2.6)}px;animation-delay:${rnd(0,4)}s"></i>`).join('');
+$('#lanterns').innerHTML=Array.from({length:7},()=>`<div class="ln" style="--x:${rnd(5,95)}%;--d:${rnd(18,34)}s;--dl:-${rnd(0,30)}s;--sw:${rnd(-40,40)}px"></div>`).join('');
+
+const floating=new Set();
+function kEl(r,cls){
+  const d=document.createElement('div');
+  d.className='k '+cls;d.dataset.id=r.id;d.style.setProperty('--x',rnd(8,80)+'%');
+  d.innerHTML=kSVG(r.c);return d;
+}
+function renderRiver(){
+  const river=$('#river');$$('#river .past').forEach(e=>e.remove());
+  let list=load().sort((a,b)=>b.t-a.t).filter(r=>!floating.has(r.id)).slice(0,12);
+  if(!list.length) list=[{id:'d1',c:'pink'},{id:'d2',c:'lilac'}]; // ตัวอย่างตอนยังไม่มีกระทงจริง
+  list.forEach((r,i)=>{
+    const d=kEl(r,'past'),b=rnd(5,26);
+    d.style.bottom=b+'%';d.style.zIndex=100-Math.round(b);
+    d.style.setProperty('--d',rnd(55,90)+'s');d.style.setProperty('--dl','-'+rnd(0,70)+'s');
+    river.appendChild(d);
+  });
+}
+function floatNew(r){
+  floating.add(r.id);
+  const d=kEl(r,'new');d.style.bottom='9%';d.style.zIndex=200;
+  d.addEventListener('animationend',e=>{if(e.animationName==='drift'){d.remove();floating.delete(r.id);renderRiver()}});
+  $('#river').appendChild(d);
+}
+
+/* ---------- ฟอร์มทำกระทง ---------- */
+let color='pink';
+$('#sws').innerHTML=Object.entries(PAL).map(([k,v])=>`<button class="sw" data-c="${k}" style="background:${v[0]}" aria-label="${v[2]}" aria-pressed="${k===color}"></button>`).join('');
+function drawPrev(){$('#prev').innerHTML=kSVG(color);$$('.sw').forEach(b=>b.setAttribute('aria-pressed',b.dataset.c===color))}
+$('#sws').onclick=e=>{const b=e.target.closest('.sw');if(b){color=b.dataset.c;drawPrev()}};
+try{const n=JSON.parse(store.getItem(NAMES)||'{}');$('#nameA').value=n.a||'';$('#nameB').value=n.b||''}catch{}
+function names(){
+  const a=$('#nameA').value.trim(),b=$('#nameB').value.trim();
+  store.setItem(NAMES,JSON.stringify({a,b}));
+  $('#sub').textContent=a&&b?`${a} & ${b} ✿ คืนวันเพ็ญ เดือน ๑๒`:'คืนวันเพ็ญ เดือน ๑๒ ✿';
+}
+$('#nameA').oninput=$('#nameB').oninput=names;names();
+
+$('#go').onclick=()=>{
+  const a=$('#nameA').value.trim(),b=$('#nameB').value.trim();
+  if(!a||!b){toast('ใส่ชื่อของทั้งสองคนก่อนนะ');return}
+  const t=Date.now();
+  const r={id:t.toString(36)+Math.random().toString(36).slice(2,6),t,year:new Date(t).getFullYear(),a,b,wa:$('#wishA').value.trim(),wb:$('#wishB').value.trim(),c:color};
+  const all=load();all.push(r);save(all);
+  floatNew(r);renderMemory();renderRemind();
+  $('#wishA').value=$('#wishB').value='';
+  window.scrollTo({top:0,behavior:'smooth'});
+  toast(`ลอยแล้ว ✨ ขอให้พรของ ${a} และ ${b} เป็นจริงนะ`);
+};
+
+/* ---------- ปีที่แล้วเราขออะไร ---------- */
+function renderRemind(){
+  const y=new Date().getFullYear();
+  const r=load().filter(x=>x.year<y).sort((p,q)=>q.t-p.t)[0],el=$('#remind');
+  el.hidden=!r;
+  if(r) el.innerHTML=`<h2>🌟 ปี ${r.year} เราขอพรไว้ว่า…</h2><p>💭 ${esc(r.a)}: ${esc(r.wa||'—')}</p><p>💭 ${esc(r.b)}: ${esc(r.wb||'—')}</p><p class="mut" style="margin-bottom:0">ปีนี้สมหวังไหมนะ? ลองเล่าให้กันฟังนะ</p>`;
+}
+
+/* ---------- สมุดความทรงจำ ---------- */
+function renderMemory(){
+  const all=load().sort((a,b)=>b.t-a.t);
+  if(!all.length){$('#memlist').innerHTML='<div class="card" style="text-align:center">ยังไม่มีกระทงดวงแรก ไปลอยด้วยกันก่อนนะ 🪷</div>';return}
+  let h='',y=null;
+  for(const r of all){
+    if(r.year!==y){y=r.year;h+=`<h2 class="yr">ปี ${esc(y)} <span class="mut">(พ.ศ. ${esc(y+543)})</span></h2>`}
+    const d=new Date(r.t).toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric'});
+    h+=`<div class="card mem"><div>${kSVG(r.c)}</div><div>
+      <button class="btn del" data-del="${esc(r.id)}">ลบ</button>
+      <h3>${esc(r.a)} &amp; ${esc(r.b)}</h3><p class="mut">${esc(d)}</p>
+      <p>💭 <b>${esc(r.a)}</b>: ${esc(r.wa||'—')}</p><p>💭 <b>${esc(r.b)}</b>: ${esc(r.wb||'—')}</p></div></div>`;
+  }
+  $('#memlist').innerHTML=h;
+}
+$('#memlist').onclick=e=>{
+  const b=e.target.closest('[data-del]');if(!b)return;
+  if(!confirm('ลบความทรงจำดวงนี้? (ถ้าไม่มีไฟล์สำรอง จะกู้คืนไม่ได้)'))return;
+  save(load().filter(r=>r.id!==b.dataset.del));renderMemory();renderRemind();renderRiver();
+};
+
+/* ---------- สำรอง / นำเข้า / แชร์ลิงก์ ---------- */
+function merge(list){
+  const cur=load(),ids=new Set(cur.map(r=>r.id));let n=0;
+  for(const r of Array.isArray(list)?list:[]){
+    if(!r||typeof r!=='object'||!r.id||ids.has(String(r.id)))continue;
+    const t=+r.t||Date.now();
+    cur.push({id:String(r.id).slice(0,40),t,year:+r.year||new Date(t).getFullYear(),a:String(r.a||'').slice(0,40),b:String(r.b||'').slice(0,40),wa:String(r.wa||'').slice(0,200),wb:String(r.wb||'').slice(0,200),c:PAL[r.c]?r.c:'pink'});
+    ids.add(String(r.id));n++;
+  }
+  save(cur);renderMemory();renderRemind();renderRiver();return n;
+}
+$('#exp').onclick=()=>{
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([JSON.stringify(load(),null,1)],{type:'application/json'}));
+  a.download='loykrathong-memories-'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(a.href);
+};
+$('#imp').onclick=()=>$('#file').click();
+$('#file').onchange=async e=>{
+  const f=e.target.files[0];if(!f)return;
+  try{toast(`นำเข้าแล้ว ${merge(JSON.parse(await f.text()))} ดวง`)}catch{toast('ไฟล์นี้อ่านไม่ได้')}
+  e.target.value='';
+};
+$('#lnk').onclick=async()=>{
+  const u=location.href.split('#')[0]+'#d='+btoa(unescape(encodeURIComponent(JSON.stringify(load()))));
+  try{await navigator.clipboard.writeText(u);toast('คัดลอกลิงก์แล้ว ส่งให้แฟนเปิดได้เลย')}catch{prompt('คัดลอกลิงก์นี้',u)}
+};
+if(location.hash.startsWith('#d=')){
+  try{
+    const list=JSON.parse(decodeURIComponent(escape(atob(location.hash.slice(3)))));
+    if(confirm(`มีความทรงจำที่แชร์มา ${list.length} ดวง รวมเข้าสมุดของเครื่องนี้ไหม?`)) toast(`รวมแล้ว ${merge(list)} ดวงใหม่`);
+  }catch{toast('ลิงก์ความทรงจำเสีย อ่านไม่ได้')}
+  history.replaceState(null,'',location.pathname+location.search);
+}
+
+/* ---------- แท็บ + คำถามชวนคุย ---------- */
+$$('.tabs button').forEach(b=>b.onclick=()=>{
+  $$('.tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));
+  $$('.tab').forEach(s=>s.hidden=s.id!=='tab-'+b.dataset.tab);
+});
+const QS=['ปีนี้มีวันไหนที่ทำให้เรายิ้มได้มากที่สุด?','อะไรที่อยากปล่อยไปกับสายน้ำคืนนี้?','ปีหน้าอยากไปไหนด้วยกันมากที่สุด?','สิ่งเล็กๆ ที่เราทำให้กันแล้วชอบที่สุดคืออะไร?','อีก 5 ปีข้างหน้า อยากให้เราสองคนเป็นยังไง?','ความทรงจำแรกๆ ของเราที่ยังจำได้ชัดคืออะไร?','ถ้าขอพรให้อีกฝ่ายได้ข้อเดียว จะขออะไร?','ปีนี้ขอบคุณอะไรในตัวอีกฝ่ายที่สุด?','มื้ออาหารที่อร่อยที่สุดที่กินด้วยกันคือมื้อไหน?','อีก 10 ปี เปิดสมุดเล่มนี้แล้วอยากเห็นอะไร?'];
+$('#qbtn').onclick=()=>{$('#q').textContent=QS[Math.floor(Math.random()*QS.length)]};
+
+drawPrev();renderRiver();renderMemory();renderRemind();
+</script>
+</body>
+</html>
