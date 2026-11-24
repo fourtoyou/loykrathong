@@ -289,7 +289,7 @@ const rnd=(a,b)=>a+Math.random()*(b-a);
 const KEY='loykrathong.v1',NAMES='loykrathong.names';
 const PAL={pink:['#ff8fb7','#ffd6e6','ชมพู'],lilac:['#a58cff','#e4dcff','ม่วงลาเวนเดอร์'],white:['#f3efff','#ffffff','ขาว'],sun:['#ffc24d','#fff0b3','เหลืองทอง']};
 const COUPLE=['โฟร์','ดาว'],ROOM='loykrathong.room',SND='loykrathong.sound',DEL='loykrathong.deleted',BAK='loykrathong.backup',READ='loykrathong.read';
-const DECO={heart:['♥','#e86f98','หัวใจ'],star:['★','#ffd479','ดาว'],moon:['☾','#fff1c9','พระจันทร์'],none:['','','ไม่มี']};
+const DECO={heart:['♥','#e86f98','หัวใจ'],star:['★','#ffd479','ดาว'],moon:['☾','#fff1c9','พระจันทร์'],paw:['🐾','#ffb36b','อุ้งเท้า'],none:['','','ไม่มี']};
 // ถ้าเบราว์เซอร์บล็อก localStorage (เช่น private mode) จะเก็บไว้ในหน้าเว็บชั่วคราวแทน
 const TEST=/[?&]test\b/.test(location.search); // ?test = รันเทสต์ในที่เก็บชั่วคราว ไม่แตะข้อมูลจริง
 const store=(()=>{try{if(TEST)throw 0;localStorage.setItem('_t','1');return localStorage}catch{const m={};return{getItem:k=>m[k]??null,setItem:(k,v)=>{m[k]=String(v)}}}})();
@@ -319,7 +319,8 @@ const STY={
  kala:['กระทงกะลา','แบบกระทงสายของ จ.ตาก ที่ลอยเป็นสายยาวตามแม่น้ำปิง','กะลามะพร้าวครึ่งซีก ใส่เทียนเล็กๆ'],
  ice:['กระทงน้ำแข็ง','ละลายหายไปเอง ขยะน้อยมาก แต่ความเย็นอาจกระทบสัตว์น้ำ ลอยแต่พอดีนะ','ก้อนน้ำแข็งใสมีดอกไม้แช่แข็งอยู่ข้างใน'],
  bread:['กระทงขนมปัง','ปลากินได้ แต่กรมควบคุมมลพิษเตือนว่าถ้าลอยในบ่อปิดเยอะๆ ทำน้ำเสียได้','ฐานขนมปังสีทอง'],
- corn:['กระทงเปลือกข้าวโพด','สินค้า OTOP ของบางชุมชน ทำจากเปลือกข้าวโพดในท้องถิ่น','กลีบจากเปลือกข้าวโพดสีฟางข้าว']
+ corn:['กระทงเปลือกข้าวโพด','สินค้า OTOP ของบางชุมชน ทำจากเปลือกข้าวโพดในท้องถิ่น','กลีบจากเปลือกข้าวโพดสีฟางข้าว'],
+ som:['กระทงแมวส้ม','กระทงพิเศษของเรา 🧡 ส้มนอนขดหลับปุ๋ยอยู่กลางกระทง ลอยไปด้วยกันนะ','แมวส้มนอนขดบนกระทงใบตอง']
 };
 const LEG={banana:'phanom',bread:'bread',coconut:'kala'}; // กระทงเวอร์ชันแรกมีแค่ฐาน (base)
 const sty=r=>Object.hasOwn(STY,r&&r.style)?r.style:Object.hasOwn(LEG,r&&r.base)?LEG[r.base]:'phanom';
@@ -371,6 +372,18 @@ const SV={
   const d='M100 120C84 104 86 80 100 62C114 80 116 104 100 120Z',pt=(a,f,sx,sy)=>G(a,`<path d="${d}" fill="${f}" stroke="#c9b458" stroke-width=".9"/><path d="M100 116V70M100 108L93 90M100 108L107 90" stroke="#d3bb62" stroke-width=".7" fill="none"/>`,sx,sy);
   const r1=rows(-72,72,24).map(a=>pt(a,'#ecdc8a',1,1)).join(''),r2=[-60,-36,-12,12,36,60].map(a=>pt(a,'#f5e8aa',.9,.8)).join(''),r3=[-36,0,36].map(a=>pt(a,'#fbf3cc',.7,.6)).join('');
   return `<ellipse cx="100" cy="134" rx="64" ry="14" fill="#c9ab52"/><rect x="36" y="120" width="128" height="14" fill="#dcc272"/><ellipse cx="100" cy="120" rx="64" ry="14" fill="#ecd98c"/><ellipse cx="100" cy="120" rx="46" ry="9" fill="none" stroke="#c9ab52" stroke-width="1.2"/>`+r1+INC+candle()+r2+r3+bloom(100,104,p,q,5)+flame()+dec(dc)+bloom(40,126,p,q)+bloom(160,126,p,q)+bloom(52,131,q,p,3)+bloom(148,131,q,p,3);
+ },
+ som:(p,q,dc)=>{
+  const lf=a=>{const t=a*Math.PI/180,x=100+64*Math.cos(t),y=120+13*Math.sin(t);return `<ellipse cx="${x}" cy="${y}" rx="12" ry="5" transform="rotate(${a*.35} ${x} ${y})" fill="${a%40?'#4fae6a':'#62bb77'}" stroke="#2f8049" stroke-width="1"/>`};
+  const leaf=rows(180,360,20).map(lf).join(''),leafF=[0,20,160,180].map(lf).join('');
+  const O='#f39a3d',D='#d9772a',L='#ffc98a',E='#4a2a14';
+  const cat=`<path d="M138 106C150 116 130 134 100 133C84 132 70 128 64 120" fill="none" stroke="${O}" stroke-width="10" stroke-linecap="round"/><path d="M72 126L70 119M78 129L76 122" stroke="${D}" stroke-width="3" stroke-linecap="round"/><path d="M64 120L68 124" stroke="${D}" stroke-width="10" stroke-linecap="round"/>`
+   +`<ellipse cx="102" cy="106" rx="44" ry="25" fill="${O}"/><ellipse cx="96" cy="116" rx="28" ry="10" fill="${L}"/><path d="M104 83L106 94M116 85L118 96M128 90L128 100" stroke="${D}" stroke-width="3" stroke-linecap="round"/>`
+   +`<path d="M58 84L62 66L74 78ZM94 84L90 66L78 78Z" fill="${O}"/><path d="M62 80L63 71L69 77ZM90 80L89 71L83 77Z" fill="#ffb3b3"/>`
+   +`<ellipse cx="76" cy="98" rx="22" ry="19" fill="${O}"/><ellipse cx="76" cy="106" rx="12" ry="8" fill="${L}"/><path d="M76 80V87M69 81L70 87M83 81L82 87" stroke="${D}" stroke-width="2.4" stroke-linecap="round"/>`
+   +`<path d="M63 98Q68 93 73 98M79 98Q84 93 89 98" fill="none" stroke="${E}" stroke-width="2" stroke-linecap="round"/><path d="M74 103H78L76 106Z" fill="#ff8fa3"/><path d="M76 106V108M72 110Q76 112 76 108Q76 112 80 110" fill="none" stroke="${E}" stroke-width="1" stroke-linecap="round"/><path d="M56 104L47 102M56 108L47 109M96 104L105 102M96 108L105 109" stroke="#fff6dc" stroke-width="1" stroke-linecap="round"/>`
+   +`<ellipse cx="92" cy="119" rx="9" ry="5.5" fill="${L}" stroke="${D}" stroke-width="1"/>`;
+  return trunk(['#ecd7a4','#d9bd82','#c9a96a'])+leaf+candle(46,114,128)+`<g transform="translate(28 0)">${flame()}</g>`+cat+leafF+dec(dc,148)+sideFlowers(p,q)+bloom(52,114,q,p,3)+bloom(148,114,q,p,3);
  }
 };
 function kSVG(r,px){
@@ -417,7 +430,7 @@ function renderRiver(){
 let color='pink',style='phanom',deco='heart';
 $('#sws').innerHTML=Object.entries(PAL).map(([k,v])=>`<button class="sw" data-c="${k}" style="background:${v[0]}" aria-label="${v[2]}" aria-pressed="${k===color}"></button>`).join('');
 $('#styles').innerHTML=Object.entries(STY).map(([k,v])=>`<button class="sty" data-s="${k}" aria-pressed="false"><span class="th"></span><span>${v[0]}</span></button>`).join('');
-$('#stylelist').innerHTML=Object.values(STY).map(v=>`<li><b>${v[0]}</b> ${v[2]} · ${v[1]}</li>`).join('');
+$('#stylelist').innerHTML=Object.entries(STY).filter(([k])=>k!=='som').map(([,v])=>`<li><b>${v[0]}</b> ${v[2]} · ${v[1]}</li>`).join('');
 $('#decos').innerHTML=Object.entries(DECO).map(([k,v])=>`<button class="opt" data-d="${k}" aria-label="${v[2]}">${v[0]} ${v[2]}</button>`).join('');
 function drawPrev(){
   $('#prev').innerHTML=kSVG({c:color,style,deco});
@@ -808,6 +821,8 @@ async function selfTest(){
   const evil='"><img src=x onerror="window.__xss=1">';
   const [x]=merge([{id:'e1',t:1,year:2026,a:evil,wa:evil,c:evil,base:evil,deco:evil}]);
   ok(x.c==='pink'&&x.style==='phanom'&&x.deco==='heart','bad c/style/deco not reset');
+  const [sm]=merge([{id:'som1',t:1,year:2026,a:'a',style:'som',deco:'paw'}]);
+  ok(sm.style==='som'&&sm.deco==='paw','som/paw not kept');
   // กระทงเก่าที่มีแต่ base ต้องแปลงเป็น style ที่ถูกต้อง
   const lg=merge([{id:'lg1',t:1,year:2026,a:'a',base:'coconut'},{id:'lg2',t:1,year:2026,a:'a',base:'bread'},{id:'lg3',t:1,year:2026,a:'a',base:'banana'},{id:'lg4',t:1,year:2026,a:'a',style:'zzz',base:'coconut'},{id:'lg5',t:1,year:2026,a:'a',style:'constructor'}]);
   ok(lg.map(q=>q.style).join()==='kala,bread,phanom,kala,phanom','legacy base not mapped to style: '+lg.map(q=>q.style));
