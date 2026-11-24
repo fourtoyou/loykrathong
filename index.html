@@ -33,7 +33,17 @@ button,input,textarea{font:inherit;color:inherit}
 .k{position:absolute;width:var(--w);filter:drop-shadow(0 0 10px rgba(255,200,110,.55));animation:drift var(--d) linear var(--dl) infinite,bob 3.2s ease-in-out infinite}
 .k svg{display:block;width:100%}
 .k.past{--w:64px;opacity:.7}
-.pair{position:absolute;display:flex;gap:2px;align-items:flex-end;animation:drift 45s linear infinite}
+.pair{position:absolute;display:flex;gap:14px;align-items:flex-end;animation:drift 45s linear infinite}
+.pair.close{gap:0;animation:drift 45s linear infinite,closer 7s ease-out}
+@keyframes closer{from{gap:14px}to{gap:0}}
+.hrt{position:absolute;z-index:5;color:#ff8fb7;font-size:19px;line-height:1;pointer-events:none;text-shadow:0 0 6px rgba(255,120,170,.8);animation:hrt 3.4s ease-out forwards}
+@keyframes hrt{0%{transform:translate(0,0) scale(.5);opacity:0}15%{opacity:1}50%{transform:translate(8px,-34px) scale(1)}100%{transform:translate(-4px,-72px) scale(1.2);opacity:0}}
+.shoot{position:absolute;width:90px;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,#fff);pointer-events:none;opacity:0;animation:shoot 1.1s ease-out forwards}
+@keyframes shoot{0%{transform:translate(0,0) rotate(25deg);opacity:1}100%{transform:translate(260px,121px) rotate(25deg);opacity:0}}
+#ffs{position:absolute;inset:0;pointer-events:none}
+.ff{position:absolute;width:4px;height:4px;border-radius:50%;background:#ffee9a;box-shadow:0 0 8px 3px rgba(255,230,120,.7);animation:ffw var(--d) ease-in-out var(--dl) infinite,ffb 2.6s ease-in-out infinite}
+@keyframes ffw{0%,100%{transform:translate(0,0)}33%{transform:translate(var(--x1),var(--y1))}66%{transform:translate(var(--x2),var(--y2))}}
+@keyframes ffb{0%,100%{opacity:.25}50%{opacity:1}}
 .pair .k{position:static;--w:96px;animation:bob 3.2s ease-in-out infinite}
 .pair .k:nth-child(2n){animation-delay:-1.6s}
 .k small{display:block;text-align:center;font-size:12px;line-height:1.3;color:#fff1c9;text-shadow:0 1px 3px #000}
@@ -53,7 +63,8 @@ main{max-width:920px;margin:0 auto;padding:18px 16px 60px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;margin-bottom:16px}
 .mut{color:var(--mut);font-size:.92em}
 .build{display:grid;grid-template-columns:minmax(200px,280px) 1fr;gap:18px;align-items:start}
-@media(max-width:680px){.build{grid-template-columns:1fr}}
+.build>*{min-width:0}
+@media(max-width:680px){.build{grid-template-columns:minmax(0,1fr)}}
 .prev{background:radial-gradient(circle at 50% 70%,rgba(255,190,110,.25),transparent 65%);border-radius:16px;padding:14px 8px;filter:drop-shadow(0 0 14px rgba(255,200,110,.5))}
 .prev svg{width:100%;display:block}
 label{display:block;font-size:.9em;color:var(--mut);margin:10px 0 4px}
@@ -85,7 +96,32 @@ details ul{margin:6px 0;padding-left:20px}
 #toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:#fff;color:#2a1b5e;padding:11px 20px;border-radius:999px;opacity:0;pointer-events:none;transition:.3s;max-width:90vw;text-align:center;z-index:9}
 #toast.on{opacity:1;transform:translate(-50%,0)}
 footer{text-align:center;color:var(--mut);font-size:.85em;padding:0 16px 30px}
-@media(prefers-reduced-motion:reduce){*{animation:none!important}.k{left:var(--x)}.pair{left:30%}}
+.styrow{display:flex;gap:8px;overflow-x:auto;padding:6px 6px 10px;scroll-snap-type:x proximity}
+.sty{flex:0 0 auto;width:88px;scroll-snap-align:start;cursor:pointer;border:2px solid transparent;background:var(--card);border-radius:14px;padding:6px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:.72em;line-height:1.25;text-align:center}
+.sty[aria-pressed=true]{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.25)}
+.th{display:block;width:64px}.th svg{width:100%;display:block}
+.msgtxt{white-space:pre-wrap;word-break:break-word;background:rgba(0,0,0,.2);border-radius:10px;padding:8px 10px}
+.env{margin:6px 0}
+#lt{position:fixed;inset:0;z-index:500;background:rgba(10,6,30,.8);display:flex;align-items:center;justify-content:center;padding:16px;overflow:hidden}
+#lt[hidden]{display:none}
+.ltbox{position:relative;z-index:2;width:min(420px,100%);max-height:94vh;overflow-y:auto;text-align:center;outline:none;padding-top:10px}
+.envl{position:relative;width:200px;height:124px;margin:40px auto 0;perspective:500px}
+.envl>div{position:absolute}
+.eb{inset:0;background:#ffb7d0;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.paper{left:14px;right:14px;top:10px;height:96px;background:#fffaf0;border-radius:4px;z-index:2;animation:paperup 1s .7s ease forwards}
+.pocket{inset:0;background:#ff9cc2;clip-path:polygon(0 0,50% 60%,100% 0,100% 100%,0 100%);border-radius:8px;z-index:3}
+.flap{left:0;right:0;top:0;height:60%;background:#ff7fae;clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:50% 0;z-index:4;animation:flapo .8s ease forwards}
+@keyframes flapo{0%{transform:rotateX(0);z-index:4}49%{z-index:4}50%{z-index:1}100%{transform:rotateX(180deg);z-index:1}}
+@keyframes paperup{to{transform:translateY(-52px)}}
+.sheet{background:#fffaf0;color:#4a2b3a;border-radius:12px;padding:14px 18px;margin:14px 0 12px;text-align:left;font-family:'Mali','Noto Sans Thai',cursive;box-shadow:0 10px 30px rgba(0,0,0,.4);animation:sheetin .9s 1.5s ease both}
+@keyframes sheetin{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+.sheet h3{font-size:1.05em;color:#c2457a}
+.sheet p{margin:8px 0 0;white-space:pre-wrap;word-break:break-word}
+.sheet .sig{text-align:right;color:#c2457a}
+#lth{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+.hh{position:absolute;bottom:-30px;color:#ff8fb7;animation:hhup var(--d) ease-in var(--dl) infinite}
+@keyframes hhup{0%{transform:translateY(0) scale(.7);opacity:0}15%{opacity:.9}100%{transform:translateY(-105vh) scale(1.3);opacity:0}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}.k{left:var(--x)}.pair{left:30%}.ff,.hh{display:none}.flap{transform:rotateX(180deg);z-index:1}.paper{transform:translateY(-52px)}}
 </style>
 </head>
 <body>
@@ -97,6 +133,7 @@ footer{text-align:center;color:var(--mut);font-size:.85em;padding:0 16px 30px}
   <div id="lanterns"></div>
   <div class="title"><h1>ลอยกระทงของเรา</h1><p id="sub">โฟร์ &amp; ดาว ✿ คืนวันเพ็ญ เดือน ๑๒</p></div>
   <div class="water"><div class="reflect"></div></div>
+  <div id="ffs"></div>
   <div class="river" id="river"></div>
 </section>
 
@@ -129,12 +166,15 @@ footer{text-align:center;color:var(--mut);font-size:.85em;padding:0 16px 30px}
         </div>
         <label>สีดอกไม้ของกระทง</label>
         <div class="sws" id="sws"></div>
-        <label>ฐานกระทง</label>
-        <div class="sws" id="bases"></div>
+        <label>แบบกระทง</label>
+        <div class="styrow" id="styles" role="group" aria-label="แบบกระทง"></div>
+        <p class="mut" id="stynote" style="margin:2px 0 0"></p>
         <label>ของประดับ</label>
         <div class="sws" id="decos"></div>
         <label for="wishA">พรของเรา</label>
         <textarea id="wishA" maxlength="200" placeholder="ขออะไรดี… หรืออยากปล่อยอะไรไปกับสายน้ำ"></textarea>
+        <label for="msgA">จดหมายลับถึงแฟน 💌 (เปิดอ่านได้เฉพาะเครื่องแฟน)</label>
+        <textarea id="msgA" maxlength="300" placeholder="เขียนอะไรถึงแฟนก็ได้ ไว้ให้เขาแอบเปิดอ่านนะ"></textarea>
         <button class="go" id="go">🕯️ ลอยกระทงของเรา</button>
         <button class="btn" id="send" style="width:100%;margin-top:8px">💌 ส่งกระทงไปลอยข้างแฟน</button>
         <p class="mut" style="margin:8px 0 0">ลอยคนละเครื่องได้เลย ลอยเสร็จกดส่งลิงก์ให้แฟนในแชต พอแฟนเปิดลิงก์ กระทงของเราจะไปลอยคู่กับกระทงของเขา แล้วให้เขาส่งของเขากลับมาด้วยนะ</p>
@@ -185,12 +225,20 @@ footer{text-align:center;color:var(--mut);font-size:.85em;padding:0 16px 30px}
         <li>บางคนใส่เส้นผมหรือเล็บ เป็นสัญลักษณ์ว่าทิ้งสิ่งไม่ดีไป</li>
       </ul>
     </details>
+    <details class="card"><summary>🪷 กระทงแบบต่างๆ</summary>
+      <ul id="stylelist"></ul>
+      <ul>
+        <li>วัสดุธรรมชาติย่อยสลายเองได้ เช่น หยวกกล้วยและใบตอง ใช้เวลาราว 2 สัปดาห์ (ตามรายงานข่าว)</li>
+        <li>กระทงโฟมห้ามใช้ เพราะย่อยสลายไม่ได้</li>
+        <li>ปี 2566 กทม. เก็บกระทงได้กว่า 6 แสนใบ ส่วนใหญ่ราว 97% ทำจากวัสดุธรรมชาติ (Bangkok Post)</li>
+      </ul>
+    </details>
     <details class="card"><summary>♻️ ลอยยังไงให้น้ำไม่เสีย</summary>
       <ul>
         <li>ใช้วัสดุธรรมชาติทั้งหมด <b>ไม่ใช้โฟม</b> เพราะย่อยสลายไม่ได้</li>
         <li>ไม่ใช้ลวดเย็บกระดาษ ตะปู หรือเข็มหมุด</li>
         <li>ไม่ใส่เหรียญ ถ้าอยากทำบุญให้ใส่ตู้บริจาค</li>
-        <li>มีกระทงขนมปังที่ปลากินได้ และจุดลอยกระทงออนไลน์ ซึ่งเก๋ไม่แพ้กัน</li>
+        <li>มีกระทงขนมปังที่ปลากินได้ แต่กรมควบคุมมลพิษเตือนว่าถ้าลอยในบ่อปิดเยอะๆ ทำน้ำเสียได้ และมีจุดลอยกระทงออนไลน์ ซึ่งเก๋ไม่แพ้กัน</li>
         <li>ลอยในจุดที่จัดไว้ แล้วช่วยเก็บขยะกลับไปด้วย</li>
       </ul>
     </details>
@@ -224,6 +272,14 @@ footer{text-align:center;color:var(--mut);font-size:.85em;padding:0 16px 30px}
 </main>
 
 <footer>ทำด้วยความรัก ✿ ลอยจริงให้ใช้วัสดุธรรมชาติ แล้วอย่าลืมเก็บขยะกลับนะ</footer>
+<div id="lt" hidden>
+  <div id="lth"></div>
+  <div class="ltbox" role="dialog" aria-modal="true" aria-labelledby="lttitle" tabindex="-1">
+    <div class="envl" aria-hidden="true"><div class="eb"></div><div class="paper"></div><div class="pocket"></div><div class="flap"></div></div>
+    <div class="sheet"><h3 id="lttitle"></h3><p id="ltmsg"></p><p class="sig" id="ltsig"></p></div>
+    <button class="btn" id="ltx">ปิดจดหมาย 💗</button>
+  </div>
+</div>
 <div id="toast" role="status"></div>
 
 <script>
@@ -232,41 +288,94 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const rnd=(a,b)=>a+Math.random()*(b-a);
 const KEY='loykrathong.v1',NAMES='loykrathong.names';
 const PAL={pink:['#ff8fb7','#ffd6e6','ชมพู'],lilac:['#a58cff','#e4dcff','ม่วงลาเวนเดอร์'],white:['#f3efff','#ffffff','ขาว'],sun:['#ffc24d','#fff0b3','เหลืองทอง']};
-const COUPLE=['โฟร์','ดาว'],ROOM='loykrathong.room',SND='loykrathong.sound',DEL='loykrathong.deleted',BAK='loykrathong.backup';
-const BASE={banana:[['#ecd7a4','#d9bd82','#c9a96a'],'หยวกกล้วย'],bread:[['#f0b46a','#d98f3f','#b8722c'],'ขนมปัง (ปลากินได้)'],coconut:[['#8a5a3a','#6b4228','#523120'],'กะลามะพร้าว (แบบกระทงสาย จ.ตาก)']};
+const COUPLE=['โฟร์','ดาว'],ROOM='loykrathong.room',SND='loykrathong.sound',DEL='loykrathong.deleted',BAK='loykrathong.backup',READ='loykrathong.read';
 const DECO={heart:['♥','#e86f98','หัวใจ'],star:['★','#ffd479','ดาว'],moon:['☾','#fff1c9','พระจันทร์'],none:['','','ไม่มี']};
 // ถ้าเบราว์เซอร์บล็อก localStorage (เช่น private mode) จะเก็บไว้ในหน้าเว็บชั่วคราวแทน
 const TEST=/[?&]test\b/.test(location.search); // ?test = รันเทสต์ในที่เก็บชั่วคราว ไม่แตะข้อมูลจริง
 const store=(()=>{try{if(TEST)throw 0;localStorage.setItem('_t','1');return localStorage}catch{const m={};return{getItem:k=>m[k]??null,setItem:(k,v)=>{m[k]=String(v)}}}})();
 const load=()=>{try{const v=JSON.parse(store.getItem(KEY));return Array.isArray(v)?v:[]}catch{return[]}};
 const save=v=>store.setItem(KEY,JSON.stringify(v));
+const isMine=r=>r.a===$('#nameA').value.trim();
+const readSet=()=>{try{const v=JSON.parse(store.getItem(READ));return new Set(Array.isArray(v)?v:[])}catch{return new Set}};
 let toastT;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),4500)}
 
-/* ---------- กระทง (SVG) ---------- */
-function kSVG(r,px){
-  const [p,q]=PAL[r.c]||PAL.pink,[bt,bs,bb]=BASE[r.base]?BASE[r.base][0]:BASE.banana[0],dc=DECO[r.deco]||DECO.heart;
+/* ---------- กระทง (SVG) 8 แบบ ---------- */
+const GR=['#3f9d5c','#62bb77','#9bd9a6'],RM='(prefers-reduced-motion:reduce)';
+const INC='<path d="M84 114L70 54M116 114L130 54" stroke="#8a5a2b" stroke-width="2" stroke-linecap="round"/><circle cx="70" cy="54" r="2.4" fill="#ff5a3c"/><circle cx="130" cy="54" r="2.4" fill="#ff5a3c"/>';
+const candle=(top=46,bot=114,x=95,w=10)=>`<rect x="${x}" y="${top}" width="${w}" height="${bot-top}" rx="2" fill="#fff6dc"/>`;
+const flame=(dy=0)=>`<g transform="translate(0 ${dy})"><path class="flame" d="M100 24C94 33 93 40 100 45C107 40 106 33 100 24Z" fill="#ffd45e"/><path class="flame" d="M100 33C97.5 37 97.5 40 100 42C102.5 40 102.5 37 100 33Z" fill="#fff4c4"/></g>`;
+const dec=(dc,y=132,st='')=>dc[0]?`<text x="100" y="${y}" text-anchor="middle" font-size="13" fill="${dc[1]}"${st}>${dc[0]}</text>`:'';
+const trunk=([bt,bs,bb])=>`<ellipse cx="100" cy="134" rx="72" ry="17" fill="${bb}"/><rect x="28" y="120" width="144" height="14" fill="${bs}"/><ellipse cx="100" cy="120" rx="72" ry="17" fill="${bt}"/><ellipse cx="100" cy="120" rx="52" ry="11" fill="none" stroke="${bb}" stroke-width="1.5"/>`;
+const bloom=(x,y,p,q,r=4)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${p}"/><circle cx="${x+1}" cy="${y+1}" r="${r*.45}" fill="${q}"/>`;
+// กลีบหนึ่งกลีบ หมุนรอบจุดโคน (100,120) ปรับขนาดได้
+const G=(a,inner,sx=1,sy=1)=>`<g transform="rotate(${a} 100 120) translate(100 120) scale(${sx} ${sy}) translate(-100 -120)">${inner}</g>`;
+const rows=(from,to,step)=>{const o=[];for(let a=from;a<=to;a+=step)o.push(a);return o};
+const sideFlowers=(p,q)=>bloom(38,124,p,q)+bloom(46,130,p,q,3)+bloom(162,124,p,q)+bloom(154,130,p,q,3);
+const STY={
+ phanom:['ใบตองกลีบพนม','ใบตองพับเป็นกลีบแหลมเรียงรอบหยวกกล้วย เหมือนมือพนมไหว้ เป็นแบบที่เจอบ่อยที่สุด','พับกลีบแหลมเหมือนมือพนม'],
+ kulab:['ใบตองกลีบกุหลาบ','ม้วนใบตองให้กลมแล้วซ้อนสองชั้น หน้าตาเหมือนกลีบกุหลาบ','ม้วนกลีบกลมซ้อนสองชั้นเหมือนกุหลาบ'],
+ lebmue:['ใบตองกลีบเล็บมือนาง','กลีบเรียวบางซ้อนแน่นหลายชั้น เหมือนเล็บมือนาง ต้องพับละเอียดมาก','กลีบเรียวบางซ้อนแน่นหลายชั้น'],
+ bua:['กระทงดอกบัว','ตามตำนานนางนพมาศ กระทงแรกเป็นรูปดอกบัว','ทั้งกระทงเป็นดอกบัวบานบนใบบัว'],
+ kala:['กระทงกะลา','แบบกระทงสายของ จ.ตาก ที่ลอยเป็นสายยาวตามแม่น้ำปิง','กะลามะพร้าวครึ่งซีก ใส่เทียนเล็กๆ'],
+ ice:['กระทงน้ำแข็ง','ละลายหายไปเอง ขยะน้อยมาก แต่ความเย็นอาจกระทบสัตว์น้ำ ลอยแต่พอดีนะ','ก้อนน้ำแข็งใสมีดอกไม้แช่แข็งอยู่ข้างใน'],
+ bread:['กระทงขนมปัง','ปลากินได้ แต่กรมควบคุมมลพิษเตือนว่าถ้าลอยในบ่อปิดเยอะๆ ทำน้ำเสียได้','ฐานขนมปังสีทอง'],
+ corn:['กระทงเปลือกข้าวโพด','สินค้า OTOP ของบางชุมชน ทำจากเปลือกข้าวโพดในท้องถิ่น','กลีบจากเปลือกข้าวโพดสีฟางข้าว']
+};
+const LEG={banana:'phanom',bread:'bread',coconut:'kala'}; // กระทงเวอร์ชันแรกมีแค่ฐาน (base)
+const sty=r=>Object.hasOwn(STY,r&&r.style)?r.style:Object.hasOwn(LEG,r&&r.base)?LEG[r.base]:'phanom';
+const SV={
+ phanom:(p,q,dc)=>{
   let leaf='',pet='',inn='';
   for(let a=-66;a<=66;a+=22) leaf+=`<path transform="rotate(${a} 100 120)" d="M100 120C86 98 92 70 100 56C108 70 114 98 100 120Z" fill="#4fae6a" stroke="#2f8049" stroke-width="1.2"/>`;
   for(let a=-55;a<=55;a+=22){
     pet+=`<path transform="rotate(${a} 100 120)" d="M100 120C90 104 94 84 100 74C106 84 110 104 100 120Z" fill="${p}"/>`;
     inn+=`<path transform="rotate(${a} 100 120)" d="M100 120C95 108 97 94 100 88C103 94 105 108 100 120Z" fill="${q}"/>`;
   }
-  return `<svg viewBox="0 14 200 142"${px?' width="200" height="142"':''} xmlns="http://www.w3.org/2000/svg" role="img" aria-label="กระทง">
-  <ellipse cx="100" cy="134" rx="72" ry="17" fill="${bb}"/>
-  <rect x="28" y="120" width="144" height="14" fill="${bs}"/>
-  <ellipse cx="100" cy="120" rx="72" ry="17" fill="${bt}"/>
-  <ellipse cx="100" cy="120" rx="52" ry="11" fill="none" stroke="${bb}" stroke-width="1.5"/>
-  ${leaf}
-  <path d="M84 114L70 54M116 114L130 54" stroke="#8a5a2b" stroke-width="2" stroke-linecap="round"/>
-  <circle cx="70" cy="54" r="2.4" fill="#ff5a3c"/><circle cx="130" cy="54" r="2.4" fill="#ff5a3c"/>
-  <rect x="95" y="46" width="10" height="68" rx="2" fill="#fff6dc"/>
-  ${pet}${inn}
-  <path class="flame" d="M100 24C94 33 93 40 100 45C107 40 106 33 100 24Z" fill="#ffd45e"/>
-  <path class="flame" d="M100 33C97.5 37 97.5 40 100 42C102.5 40 102.5 37 100 33Z" fill="#fff4c4"/>
-  ${dc[0]?`<text x="100" y="132" text-anchor="middle" font-size="13" fill="${dc[1]}">${dc[0]}</text>`:''}
-  <circle cx="38" cy="124" r="4" fill="${p}"/><circle cx="46" cy="130" r="3" fill="${q}"/>
-  <circle cx="162" cy="124" r="4" fill="${p}"/><circle cx="154" cy="130" r="3" fill="${q}"/>
-  </svg>`;
+  return trunk(['#ecd7a4','#d9bd82','#c9a96a'])+leaf+INC+candle()+pet+inn+flame()+dec(dc)+sideFlowers(p,q);
+ },
+ kulab:(p,q,dc)=>{
+  const d='M100 120C84 112 80 92 92 82C98 77 102 77 108 82C120 92 116 112 100 120Z',curl='<path d="M91 90C95 98 105 98 109 90" fill="none" stroke="#2f8049" stroke-width="1.5" stroke-linecap="round"/>';
+  const out=rows(-66,66,22).map(a=>G(a,`<path d="${d}" fill="#58b36f" stroke="#2f8049" stroke-width="1"/>${curl}`,1.12,1.12)).join('');
+  const inn=rows(-55,55,22).map(a=>G(a,`<path d="${d}" fill="#9ad9a6" stroke="#3f9d5c" stroke-width="1"/>${curl}`,.8,.78)).join('');
+  return trunk(['#e8d29a','#d4b878','#c2a35e'])+out+INC+candle()+inn+bloom(100,106,p,q,5)+flame()+dec(dc)+sideFlowers(p,q);
+ },
+ lebmue:(p,q,dc)=>{
+  const d='M100 120C93 104 94 86 100 66C106 86 107 104 100 120Z',pt=(a,f,s,sx,sy)=>G(a,`<path d="${d}" fill="${f}" stroke="${s}" stroke-width=".7"/>`,sx,sy);
+  const r1=rows(-78,78,13).map(a=>pt(a,GR[0],'#2f8049',1,1)).join(''),r2=rows(-70,70,14).map(a=>pt(a,GR[1],'#3f9d5c',.95,.84)).join(''),r3=rows(-56,56,14).map(a=>pt(a,GR[2],'#62bb77',.9,.64)).join(''),r4=rows(-40,40,20).map((a,i)=>pt(a,i%2?q:p,'none',.62,.42)).join('');
+  return trunk(['#d8e5b4','#bfd08f','#a8bb78'])+r1+INC+candle()+r2+r3+r4+flame()+dec(dc)+sideFlowers(p,q);
+ },
+ bua:(p,q,dc)=>{
+  const d='M100 124C76 112 74 84 100 54C126 84 124 112 100 124Z',veins=rows(-70,70,28).map(a=>`<path d="M100 130L${100+80*Math.sin(a*Math.PI/180)} ${130-14*Math.cos(a*Math.PI/180)}" stroke="#2f8049" stroke-width=".9"/>`).join('');
+  const back=[-80,80,-60,60,-40,40,-20,20,0].map(a=>G(a,`<path d="${d}" fill="${p}" stroke="rgba(0,0,0,.2)" stroke-width=".8"/><path d="M100 118C94 100 96 80 100 68C104 80 106 100 100 118Z" fill="${q}" opacity=".5"/>`,1,1)).join('');
+  const front=rows(-62,62,31).map(a=>G(a,`<path d="${d}" fill="${q}" stroke="${p}" stroke-width="1.4"/>`,.84,.82)).join('');
+  const stam=[-14,-7,0,7,14].map(x=>`<circle cx="${100+x}" cy="${108-Math.abs(x)/3}" r="2.6" fill="#ffd45e"/>`).join('');
+  return `<ellipse cx="100" cy="132" rx="82" ry="15" fill="#2f8a50"/><ellipse cx="100" cy="130" rx="82" ry="15" fill="#4fae6a"/>${veins}`+back+INC+candle(52,112)+stam+front+flame(6)+dec(dc,141);
+ },
+ kala:(p,q,dc)=>{
+  const hair=[[48,124,44,134],[62,132,60,142],[80,138,79,147],[100,140,100,149],[120,138,121,147],[138,132,140,142],[152,124,156,134]].map(([a,b,c,d])=>`<path d="M${a} ${b}L${c} ${d}" stroke="#3d2414" stroke-width="1.6" stroke-linecap="round"/>`).join('');
+  const fl=[20,45,70,110,135,160].map((t,i)=>bloom(100+68*Math.cos(t*Math.PI/180),108+13*Math.sin(t*Math.PI/180)+2,i%2?q:p,i%2?p:q,5)).join('');
+  return `<path d="M32 108C34 140 62 150 100 150C138 150 166 140 168 108Z" fill="#6b4228"/><path d="M44 118C48 134 60 142 76 146" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="3" stroke-linecap="round"/>${hair}<ellipse cx="100" cy="108" rx="68" ry="13" fill="#8a5a3a"/><ellipse cx="100" cy="109" rx="60" ry="10" fill="#2e1b10"/>`+candle(76,108,96,8)+flame(32)+fl+dec(dc,142);
+ },
+ ice:(p,q,dc)=>{
+  const fl=[[58,122],[84,130],[113,122],[142,129],[100,133]].map(([x,y],i)=>`<g opacity=".92">${[0,72,144,216,288].map(a=>`<ellipse cx="${x}" cy="${y-5}" rx="2.6" ry="5" transform="rotate(${a} ${x} ${y})" fill="${i%2?q:p}"/>`).join('')}<circle cx="${x}" cy="${y}" r="2.4" fill="#ffd45e"/></g>`).join('');
+  const lf=[[70,134,-30],[128,134,25],[92,121,60]].map(([x,y,a])=>`<ellipse cx="${x}" cy="${y}" rx="6" ry="2.4" transform="rotate(${a} ${x} ${y})" fill="#6fcf8f" opacity=".75"/>`).join('');
+  return `<path d="M60 140q0 8 3 8t3-8M138 140q0 9 3 9t3-9" fill="rgba(170,220,250,.6)"/><rect x="32" y="98" width="136" height="42" rx="6" fill="rgba(170,220,250,.55)" stroke="rgba(255,255,255,.8)" stroke-width="1.3"/><path d="M32 98L54 82H146L168 98Z" fill="rgba(220,244,255,.8)" stroke="rgba(255,255,255,.8)" stroke-width="1.2" stroke-linejoin="round"/>`+lf+fl+`<path d="M42 106L56 134M52 104L60 118" stroke="rgba(255,255,255,.75)" stroke-width="3" stroke-linecap="round"/><path d="M64 87H98" stroke="#fff" stroke-width="2.4" stroke-linecap="round" opacity=".8"/><ellipse cx="100" cy="90" rx="13" ry="4" fill="rgba(255,246,220,.85)"/>`+candle(66,90)+flame(21)+dec(dc,113,' stroke="#4a6a8a" stroke-width=".7" paint-order="stroke"');
+ },
+ bread:(p,q,dc)=>{
+  const leaf=rows(-60,60,30).map(a=>G(a,'<path d="M100 120C86 98 92 70 100 56C108 70 114 98 100 120Z" fill="#4fae6a" stroke="#2f8049" stroke-width="1.2"/>',.8,.76)).join('');
+  const cuts=[44,66,88,110,132,154].map(x=>`<path d="M${x} 122l7 11" stroke="#b8722c" stroke-width="1.6" stroke-linecap="round"/>`).join('');
+  const seeds=[[56,116],[72,123],[90,126],[110,126],[128,123],[144,116],[100,113]].map(([x,y])=>`<ellipse cx="${x}" cy="${y}" rx="2.2" ry="1.1" fill="#fff3d0"/>`).join('');
+  return `<ellipse cx="100" cy="134" rx="74" ry="18" fill="#b8722c"/><rect x="26" y="120" width="148" height="14" fill="#d98f3f"/><ellipse cx="100" cy="120" rx="74" ry="18" fill="#f0b46a"/><ellipse cx="100" cy="120" rx="54" ry="11" fill="#f8d9a0" stroke="#d98f3f" stroke-width="1.5"/>${cuts}`+leaf+INC+candle()+seeds+bloom(60,118,p,q,6)+bloom(140,118,p,q,6)+bloom(82,126,q,p,5)+bloom(118,126,q,p,5)+flame()+dec(dc);
+ },
+ corn:(p,q,dc)=>{
+  const d='M100 120C84 104 86 80 100 62C114 80 116 104 100 120Z',pt=(a,f,sx,sy)=>G(a,`<path d="${d}" fill="${f}" stroke="#c9b458" stroke-width=".9"/><path d="M100 116V70M100 108L93 90M100 108L107 90" stroke="#d3bb62" stroke-width=".7" fill="none"/>`,sx,sy);
+  const r1=rows(-72,72,24).map(a=>pt(a,'#ecdc8a',1,1)).join(''),r2=[-60,-36,-12,12,36,60].map(a=>pt(a,'#f5e8aa',.9,.8)).join(''),r3=[-36,0,36].map(a=>pt(a,'#fbf3cc',.7,.6)).join('');
+  return `<ellipse cx="100" cy="134" rx="64" ry="14" fill="#c9ab52"/><rect x="36" y="120" width="128" height="14" fill="#dcc272"/><ellipse cx="100" cy="120" rx="64" ry="14" fill="#ecd98c"/><ellipse cx="100" cy="120" rx="46" ry="9" fill="none" stroke="#c9ab52" stroke-width="1.2"/>`+r1+INC+candle()+r2+r3+bloom(100,104,p,q,5)+flame()+dec(dc)+bloom(40,126,p,q)+bloom(160,126,p,q)+bloom(52,131,q,p,3)+bloom(148,131,q,p,3);
+ }
+};
+function kSVG(r,px){
+  const [p,q]=PAL[r.c]||PAL.pink,dc=DECO[r.deco]||DECO.heart;
+  return `<svg viewBox="0 14 200 142"${px?' width="200" height="142"':''} xmlns="http://www.w3.org/2000/svg" role="img" aria-label="กระทง">${SV[sty(r)](p,q,dc)}</svg>`;
 }
 
 /* ---------- ฉาก: ดาว โคม แม่น้ำ ---------- */
@@ -298,44 +407,47 @@ function renderRiver(){
   const now=perPerson(all.filter(r=>r.year===y)).slice(-4);
   if(now.length){
     const g=document.createElement('div');g.className='pair';g.style.bottom='6%';g.style.zIndex=200;
-    now.forEach(r=>g.appendChild(kEl(r,'',who(r))));
+    now.forEach(r=>g.appendChild(kEl(r,'',who(r)+(r.msg&&!isMine(r)?' 💌':''))));
+    if(now.length>=2)g.classList.add('close'); // คู่กันแล้ว ขยับเข้าใกล้กัน
     river.appendChild(g);
   }
 }
 
 /* ---------- ฟอร์มทำกระทง ---------- */
-let color='pink',base='banana',deco='heart';
+let color='pink',style='phanom',deco='heart';
 $('#sws').innerHTML=Object.entries(PAL).map(([k,v])=>`<button class="sw" data-c="${k}" style="background:${v[0]}" aria-label="${v[2]}" aria-pressed="${k===color}"></button>`).join('');
-$('#bases').innerHTML=Object.entries(BASE).map(([k,v])=>`<button class="opt" data-b="${k}">${v[1]}</button>`).join('');
+$('#styles').innerHTML=Object.entries(STY).map(([k,v])=>`<button class="sty" data-s="${k}" aria-pressed="false"><span class="th"></span><span>${v[0]}</span></button>`).join('');
+$('#stylelist').innerHTML=Object.values(STY).map(v=>`<li><b>${v[0]}</b> ${v[2]} · ${v[1]}</li>`).join('');
 $('#decos').innerHTML=Object.entries(DECO).map(([k,v])=>`<button class="opt" data-d="${k}" aria-label="${v[2]}">${v[0]} ${v[2]}</button>`).join('');
 function drawPrev(){
-  $('#prev').innerHTML=kSVG({c:color,base,deco});
+  $('#prev').innerHTML=kSVG({c:color,style,deco});
+  $$('#styles .sty').forEach(b=>{b.querySelector('.th').innerHTML=kSVG({c:color,style:b.dataset.s,deco:'none'});b.setAttribute('aria-pressed',b.dataset.s===style)});
+  $('#stynote').textContent='รู้ไหม: '+STY[style][1];
   $$('.sw').forEach(b=>b.setAttribute('aria-pressed',b.dataset.c===color));
-  $$('[data-b]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.b===base));
   $$('[data-d]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.d===deco));
 }
-$('#bases').onclick=e=>{const b=e.target.closest('[data-b]');if(b){base=b.dataset.b;drawPrev()}};
+$('#styles').onclick=e=>{const b=e.target.closest('[data-s]');if(b){style=b.dataset.s;drawPrev()}};
 $('#decos').onclick=e=>{const b=e.target.closest('[data-d]');if(b){deco=b.dataset.d;drawPrev()}};
-$$('[data-me]').forEach(b=>b.onclick=()=>{const i=+b.dataset.me;$('#nameA').value=COUPLE[i];$('#nameB').value=COUPLE[1-i];names()});
+$$('[data-me]').forEach(b=>b.onclick=()=>{const i=+b.dataset.me;$('#nameA').value=COUPLE[i];$('#nameB').value=COUPLE[1-i];names();renderRiver()});
 $('#sws').onclick=e=>{const b=e.target.closest('.sw');if(b){color=b.dataset.c;drawPrev()}};
 try{const n=JSON.parse(store.getItem(NAMES)||'{}');$('#nameA').value=n.a||'';$('#nameB').value=n.b||''}catch{}
 function names(){
   const a=$('#nameA').value.trim(),b=$('#nameB').value.trim();
-  store.setItem(NAMES,JSON.stringify({a,b}));
+  store.setItem(NAMES,JSON.stringify({a,b}));renderMemory(); // จดหมาย: ของเรา/ของแฟน ดูจากชื่อเรา
   $('#sub').textContent=a&&b?`${a} & ${b} ✿ คืนวันเพ็ญ เดือน ๑๒`:`${COUPLE[0]} & ${COUPLE[1]} ✿ คืนวันเพ็ญ เดือน ๑๒`;
 }
-$('#nameA').oninput=$('#nameB').oninput=names;names();
+$('#nameA').oninput=$('#nameB').oninput=names;$('#nameA').onchange=renderRiver;names();
 
 $('#go').onclick=()=>{
   const a=$('#nameA').value.trim(),b=$('#nameB').value.trim();
   if(!a){toast('ใส่ชื่อเราก่อนนะ');return}
   const t=Date.now();
-  const r={id:t.toString(36)+Math.random().toString(36).slice(2,6),t,year:new Date(t).getFullYear(),a,b:'',wa:$('#wishA').value.trim(),wb:'',c:color,base,deco};
+  const r={id:t.toString(36)+Math.random().toString(36).slice(2,6),t,year:new Date(t).getFullYear(),a,b:'',wa:$('#wishA').value.trim(),wb:'',c:color,style,deco,msg:$('#msgA').value.trim().slice(0,300)};
   const all=load();all.push(r);save(all);plop();pub(r);
   navigator.storage&&navigator.storage.persist&&navigator.storage.persist().catch(()=>{}); // ขอไม่ให้เบราว์เซอร์ลบข้อมูลเอง
   renderKeep();
   renderRiver();renderMemory();renderRemind();
-  $('#wishA').value='';
+  $('#wishA').value='';$('#msgA').value='';
   window.scrollTo({top:0,behavior:'smooth'});
   toast(`ลอยแล้ว ✨ กด "ส่งกระทงไปลอยข้างแฟน" ให้${b||'แฟน'}เห็นด้วยนะ`);
 };
@@ -349,6 +461,11 @@ function renderRemind(){
 }
 
 /* ---------- สมุดความทรงจำ ---------- */
+function letterBox(r){
+  if(!r.msg)return '';
+  if(isMine(r))return `<p>💌 ส่งจดหมายลับไปแล้ว</p><details><summary>ดูที่เราเขียน</summary><p class="msgtxt">${esc(r.msg)}</p></details>`;
+  return `<button class="btn env" data-env="${esc(r.id)}">${readSet().has(r.id)?'💗 อ่านแล้ว · ':'💌 '}จดหมายจาก ${esc(r.a)}</button>`;
+}
 function renderMemory(){
   const all=load().sort((a,b)=>b.t-a.t);
   if(!all.length){$('#memlist').innerHTML='<div class="card" style="text-align:center">ยังไม่มีกระทงดวงแรก ไปลอยด้วยกันก่อนนะ 🪷</div>';return}
@@ -358,13 +475,14 @@ function renderMemory(){
     const d=new Date(r.t).toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric'});
     h+=`<div class="card mem"><div>${kSVG(r)}</div><div>
       <button class="btn del" data-del="${esc(r.id)}">ลบ</button>
-      <h3>${esc(who(r))}</h3><p class="mut">${esc(d)}</p>${wishes(r)}</div></div>`;
+      <h3>${esc(who(r))}</h3><p class="mut">${esc(d)}</p>${wishes(r)}${letterBox(r)}</div></div>`;
   }
   $('#memlist').innerHTML=h;
 }
 $('#memlist').onclick=async e=>{
   const im=e.target.closest('[data-img]');
   if(im){try{const y=+im.dataset.img,b=await yearPNG(y),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`loykrathong-${y}.png`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}catch{toast('สร้างภาพไม่สำเร็จ')}return}
+  const ev=e.target.closest('[data-env]');if(ev){openLetter(ev.dataset.env);return}
   const b=e.target.closest('[data-del]');if(!b)return;
   if(!confirm('ลบความทรงจำดวงนี้? (ถ้าไม่มีไฟล์สำรอง จะกู้คืนไม่ได้)'))return;
   // จำ id ที่ลบไว้ ลิงก์/ห้องซิงก์จากแฟนจะได้ไม่เอากลับมาอีก (นำเข้าไฟล์สำรองยังกู้คืนได้)
@@ -382,7 +500,7 @@ function merge(list,restore){
     if(ids.has(id))continue;
     if(del.has(id)){if(!restore)continue;del.delete(id)}
     const t=+r.t||Date.now();
-    const x={id,t,year:+r.year||new Date(t).getFullYear(),a:String(r.a||'').slice(0,40),b:String(r.b||'').slice(0,40),wa:String(r.wa||'').slice(0,200),wb:String(r.wb||'').slice(0,200),c:PAL[r.c]?r.c:'pink',base:BASE[r.base]?r.base:'banana',deco:DECO[r.deco]?r.deco:'heart'};
+    const x={id,t,year:+r.year||new Date(t).getFullYear(),a:String(r.a||'').slice(0,40),b:String(r.b||'').slice(0,40),wa:String(r.wa||'').slice(0,200),wb:String(r.wb||'').slice(0,200),c:PAL[r.c]?r.c:'pink',style:sty(r),deco:DECO[r.deco]?r.deco:'heart',msg:String(r.msg||'').slice(0,300)};
     cur.push(x);ids.add(x.id);added.push(x);
   }
   if(restore)store.setItem(DEL,JSON.stringify([...del]));
@@ -429,7 +547,7 @@ if(location.hash.startsWith('#d=')){
     if(confirm(`${from} ส่งกระทงมาให้ เอามาลอยไว้ด้วยกันไหม? 🪷`)){
       const got=merge(list),me=$('#nameA').value.trim(),o=got.find(r=>r.a&&r.a!==me);
       if(o&&!$('#nameB').value.trim()){$('#nameB').value=o.a.slice(0,30);names()}
-      toast(got.length?`กระทงของ ${from} ลอยมาอยู่ข้างๆ แล้ว 💕`:'กระทงนี้ลอยอยู่ในแม่น้ำของเราแล้ว');
+      toast(got.length?`กระทงของ ${from} ลอยมาอยู่ข้างๆ แล้ว 💕`:'กระทงนี้ลอยอยู่ในแม่น้ำของเราแล้ว');letterToast(got);
     }
   }catch{toast('ลิงก์ความทรงจำเสีย อ่านไม่ได้')}
   history.replaceState(null,'',location.pathname+location.search);
@@ -462,10 +580,16 @@ async function unseal(k,s){
 }
 const getK=()=>K||(K=roomKeys(room));
 let pubWarned=false;
+// ntfy รับข้อความได้ไม่เกิน 4096 ไบต์ ถ้าเกินให้ตัดจดหมายลง (base64 เป็น ASCII ความยาว = ไบต์)
+async function sealFit(k,r){
+  let s=await seal(k,r);
+  while(s.length>4000&&r.msg){r={...r,msg:r.msg.slice(0,Math.floor(r.msg.length*.85))};s=await seal(k,r)}
+  return s;
+}
 async function pub(r){
   if(!room||!roomOk)return;
   try{
-    const {t,k}=await getK(),res=await fetch('https://ntfy.sh/'+t,{method:'POST',body:await seal(k,r)});
+    const {t,k}=await getK(),res=await fetch('https://ntfy.sh/'+t,{method:'POST',body:await sealFit(k,r)});
     if(!res.ok)throw 0;
   }catch{if(!pubWarned){pubWarned=true;toast('ส่งไปให้แฟนอัตโนมัติไม่สำเร็จ ใช้ปุ่มส่งลิงก์แทนได้')}}
 }
@@ -484,7 +608,7 @@ async function startSync(){
     try{
       const d=JSON.parse(e.data);if(d.event!=='message')return;
       const got=merge([await unseal(k,d.message)]);
-      if(got.length){toast(`กระทงของ ${got[0].a} ลอยมาหาแล้ว 💕`);plop()}
+      if(got.length){if(!letterToast(got))toast(`กระทงของ ${got[0].a} ลอยมาหาแล้ว 💕`);plop()}
     }catch{}
   };
 }
@@ -507,6 +631,55 @@ if(location.hash.startsWith('#room=')){
   else if(c!==room&&confirm('เข้าห้องลอยกระทงของโฟร์กับดาวไหม? 💞')){room=c;K=null;store.setItem(ROOM,c)}
   history.replaceState(null,'',location.pathname+location.search);
 }
+
+/* ---------- จดหมายลับ ---------- */
+function letterToast(got){
+  const me=$('#nameA').value.trim(),l=got.find(r=>r.msg&&r.a!==me);
+  if(l)toast(`${l.a} ส่งจดหมายลับมา 💌 ไปเปิดในสมุดความทรงจำนะ`);
+  return !!l;
+}
+let ltFrom=null,ltId='';
+function openLetter(id){
+  const r=load().find(x=>x.id===id);if(!r||!r.msg)return;
+  ltFrom=document.activeElement;ltId=id;
+  $('#lttitle').textContent=`จดหมายจาก ${r.a} 💌`;$('#ltmsg').textContent=r.msg;$('#ltsig').textContent=`— ${r.a} 💗`;
+  const box=$('.ltbox'),n=box.cloneNode(true);box.replaceWith(n); // ให้แอนิเมชันซองเริ่มใหม่ทุกครั้ง
+  $('#ltx').onclick=closeLetter;
+  $('#lth').innerHTML=matchMedia(RM).matches?'':Array.from({length:12},()=>`<span class="hh" style="left:${rnd(2,96)}%;font-size:${rnd(12,26)}px;--d:${rnd(5,9)}s;--dl:-${rnd(0,8)}s">♥</span>`).join('');
+  $('#lt').hidden=false;$('.ltbox').focus();$('#ltx').focus();
+  const rd=readSet();rd.add(id);store.setItem(READ,JSON.stringify([...rd]));renderMemory();
+}
+function closeLetter(){
+  if($('#lt').hidden)return;
+  $('#lt').hidden=true;$('#lth').innerHTML='';
+  const back=$(`[data-env="${ltId}"]`)||ltFrom;if(back&&back.focus)back.focus();
+}
+$('#lt').onclick=e=>{if(e.target.id==='lt')closeLetter()};
+document.addEventListener('keydown',e=>{
+  if($('#lt').hidden)return;
+  if(e.key==='Escape')closeLetter();
+  else if(e.key==='Tab'){e.preventDefault();$('#ltx').focus()} // มีปุ่มเดียวในกล่อง โฟกัสไม่หลุดออกไป
+});
+
+/* ---------- ฉากโรแมนติก: หัวใจ ดาวตก หิ่งห้อย ---------- */
+function heartTick(){
+  if(document.hidden||matchMedia(RM).matches)return;
+  const g=$('.pair'),ks=g?g.querySelectorAll('.k'):[];if(ks.length<2)return;
+  const i=Math.floor(Math.random()*(ks.length-1)),a=ks[i].getBoundingClientRect(),b=ks[i+1].getBoundingClientRect(),R=g.getBoundingClientRect();
+  const h=document.createElement('span');h.className='hrt';h.textContent='♥'; // อยู่ในกลุ่มคู่ จึงลอยไปกับกระทง
+  h.style.left=((a.right+b.left)/2-R.left-7)+'px';h.style.top=(a.top-R.top+a.height*.3)+'px';
+  h.onanimationend=()=>h.remove();g.appendChild(h);
+}
+setInterval(heartTick,3000);
+function shoot(){
+  if(!document.hidden&&!matchMedia(RM).matches){
+    const e=document.createElement('b');e.className='shoot';e.style.cssText=`left:${rnd(5,55)}%;top:${rnd(3,26)}%`;
+    e.onanimationend=()=>e.remove();$('#sky').appendChild(e);
+  }
+  setTimeout(shoot,rnd(8000,20000));
+}
+setTimeout(shoot,rnd(8000,20000));
+$('#ffs').innerHTML=Array.from({length:8},()=>`<i class="ff" style="left:${rnd(4,96)}%;bottom:${rnd(36,52)}%;--d:${rnd(9,16)}s;--dl:-${rnd(0,12)}s;--x1:${rnd(-40,40)}px;--y1:${rnd(-16,12)}px;--x2:${rnd(-50,50)}px;--y2:${rnd(-18,10)}px"></i>`).join('');
 
 /* ---------- เสียง (Web Audio ล้วน ไม่มีไฟล์) ---------- */
 let ac,master,echo,musicT,soundOn=store.getItem(SND)==='1';
@@ -634,10 +807,34 @@ async function selfTest(){
   // 1) ข้อมูลแปลกจากลิงก์/ไฟล์ถูกตีกลับเป็นค่าเริ่มต้น และไม่รันโค้ด
   const evil='"><img src=x onerror="window.__xss=1">';
   const [x]=merge([{id:'e1',t:1,year:2026,a:evil,wa:evil,c:evil,base:evil,deco:evil}]);
-  ok(x.c==='pink'&&x.base==='banana'&&x.deco==='heart','bad c/base/deco not reset');
+  ok(x.c==='pink'&&x.style==='phanom'&&x.deco==='heart','bad c/style/deco not reset');
+  // กระทงเก่าที่มีแต่ base ต้องแปลงเป็น style ที่ถูกต้อง
+  const lg=merge([{id:'lg1',t:1,year:2026,a:'a',base:'coconut'},{id:'lg2',t:1,year:2026,a:'a',base:'bread'},{id:'lg3',t:1,year:2026,a:'a',base:'banana'},{id:'lg4',t:1,year:2026,a:'a',style:'zzz',base:'coconut'},{id:'lg5',t:1,year:2026,a:'a',style:'constructor'}]);
+  ok(lg.map(q=>q.style).join()==='kala,bread,phanom,kala,phanom','legacy base not mapped to style: '+lg.map(q=>q.style));
+  ok(sty({base:'coconut'})==='kala'&&sty({style:'ice',base:'coconut'})==='ice','sty() mapping');
+  // ทุกแบบ x ทุกสี วาดได้ ไม่มี NaN/undefined
+  for(const k in STY)for(const c in PAL){const v=kSVG({c,style:k,deco:'star'});ok(v.startsWith('<svg')&&!/NaN|undefined/.test(v),`kSVG ${k}/${c}`)}
+  // จดหมายลับ: ตัดที่ 300, ซองขึ้นเฉพาะเครื่องแฟน, เปิดอ่านด้วย textContent, จำว่าอ่านแล้ว
+  const savedA=$('#nameA').value;$('#nameA').value='โฟร์';names();store.setItem(READ,'[]');
+  const [lm]=merge([{id:'lm1',t:5,year:2026,a:'ดาว',msg:evil+'x'.repeat(400)}]);
+  ok(lm.msg.length===300,'msg not capped at 300');
+  merge([{id:'lm2',t:6,year:2026,a:'โฟร์',msg:'ของเราเอง'}]);
+  ok($('[data-env="lm1"]')&&!$('[data-env="lm2"]')&&$('#memlist details'),'envelope only on partner device');
+  ok(!$('#memlist img'),'XSS: <img> in memory list');
+  $('[data-tab=memory]').click(); // ต้องเห็นแท็บถึงจะโฟกัสปุ่มได้
+  $('[data-env="lm1"]').click();
+  ok(!$('#lt').hidden&&$('#ltmsg').textContent===lm.msg&&!$('#lt img'),'letter modal text');
+  ok(document.activeElement===$('#ltx'),'focus not in modal');
+  ok(readSet().has('lm1'),'read state not saved');
+  document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape'}));
+  ok($('#lt').hidden&&document.activeElement===$('[data-env="lm1"]'),'Esc/focus return');
+  ok(/อ่านแล้ว/.test($('[data-env="lm1"]').textContent),'read label');
+  ok(letterToast([lm])&&!letterToast([{a:'โฟร์',msg:'x'}]),'letter toast');
+  $('[data-tab=float]').click();
+  $('#nameA').value=savedA;names();
   ok(!$('#memlist img')&&!$('#river img'),'XSS: <img> got into the page');
   // 2) เข้ารหัสลิงก์ #d= แล้วถอดได้ข้อมูลเดิม (ภาษาไทย+อีโมจิ)
-  const r={id:'t1',t:2,year:2026,a:'ดาว',wa:'ขอให้เรียนจบ 💕',c:'lilac',base:'coconut',deco:'star'};
+  const r={id:'t1',t:2,year:2026,a:'ดาว',wa:'ขอให้เรียนจบ 💕',c:'lilac',style:'kala',deco:'star',msg:'💌 จดหมาย'};
   const back=JSON.parse(decodeURIComponent(escape(atob(btoa(unescape(encodeURIComponent(JSON.stringify([r]))))))))[0];
   ok(JSON.stringify(back)===JSON.stringify(r),'#d= link round trip changed data');
   // 3) merge ซ้ำไม่เพิ่มดวงซ้ำ (รวม id ยาว)
@@ -652,6 +849,16 @@ async function selfTest(){
   ok(perPerson(load().filter(q=>q.year===2026)).map(q=>q.id).join()==='f3,d1','pair should be latest per person');
   // 6) เข้ารหัสห้องซิงก์ แล้วถอดได้ข้อมูลเดิม (ต้องเป็น https)
   if(roomOk){const {k}=await roomKeys('abcdefghijklmnop'),s=await seal(k,r);ok(!s.includes('ดาว')&&JSON.stringify(await unseal(k,s))===JSON.stringify(r),'room encryption round trip')}
+  // ขนาดข้อความห้อง: ชื่อ 40 + พร 200 x2 + จดหมาย 300 (ไทย 3 ไบต์/ตัว) ต้องไม่เกิน 4096
+  if(roomOk){
+    const {k}=await roomKeys('abcdefghijklmnop'),th=n=>'ก'.repeat(n);
+    const big={id:'zz',t:Date.now(),year:2026,a:th(40),b:th(40),wa:th(200),wb:th(200),c:'pink',style:'ice',deco:'heart',msg:th(300)};
+    const sz=(await seal(k,big)).length,fit=await sealFit(k,big);
+    ok(sz<4096&&fit.length===sz,'worst-case record >=4096 bytes: '+sz);
+    const huge=await sealFit(k,{...big,msg:th(3000)});
+    ok(huge.length<=4000,'sealFit did not trim');
+    console.log('worst-case sealed size',sz,'trimmed huge',huge.length);
+  }
   ok(!window.__xss,'XSS ran');
   save([]);renderMemory();renderRiver();renderRemind();
   const msg=fails.length?'❌ เทสต์ไม่ผ่าน: '+fails.join(' | '):`✅ เทสต์ผ่านหมด${roomOk?'':' (ข้ามเทสต์เข้ารหัส: ไม่ใช่ https)'}`;
