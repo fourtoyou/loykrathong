@@ -61,7 +61,13 @@ label{display:block;font-size:.9em;color:var(--mut);margin:10px 0 4px}
 input,textarea{width:100%;background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:12px;padding:9px 12px}
 textarea{resize:vertical;min-height:70px}
 input:focus,textarea:focus,button:focus-visible{outline:2px solid var(--pink);outline-offset:1px}
-.sws{display:flex;gap:10px}
+.sws{display:flex;gap:10px;flex-wrap:wrap}
+.opt{cursor:pointer;border:2px solid transparent;background:var(--card);border-radius:999px;padding:4px 12px;font-size:.92em}
+.opt[aria-pressed=true]{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.25)}
+.snd{position:absolute;top:10px;left:10px;z-index:300;background:rgba(0,0,0,.35)}
+.ln.tl{animation:tlrise 7s ease-out forwards}
+@keyframes tlrise{0%{transform:translate(0,0);opacity:0}10%{opacity:.9}100%{transform:translate(var(--sw),-300px);opacity:0}}
+.hero{cursor:pointer}
 .sw{width:34px;height:34px;border-radius:50%;border:2px solid transparent;cursor:pointer}
 .sw[aria-pressed=true]{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.25)}
 .go{margin-top:14px;width:100%;cursor:pointer;border:0;border-radius:999px;padding:12px;font-weight:600;font-size:1.05em;color:#1a1040;background:linear-gradient(135deg,#ffd479,#ff9cc2)}
@@ -85,10 +91,11 @@ footer{text-align:center;color:var(--mut);font-size:.85em;padding:0 16px 30px}
 <body>
 
 <section class="hero" aria-label="แม่น้ำยามค่ำคืน">
+  <button class="btn snd" id="snd" aria-pressed="false">🔈 เปิดเสียง</button>
   <div class="sky" id="sky"></div>
   <div class="moon"></div>
   <div id="lanterns"></div>
-  <div class="title"><h1>ลอยกระทงของเรา</h1><p id="sub">คืนวันเพ็ญ เดือน ๑๒ ✿</p></div>
+  <div class="title"><h1>ลอยกระทงของเรา</h1><p id="sub">โฟร์ &amp; ดาว ✿ คืนวันเพ็ญ เดือน ๑๒</p></div>
   <div class="water"><div class="reflect"></div></div>
   <div class="river" id="river"></div>
 </section>
@@ -103,15 +110,28 @@ footer{text-align:center;color:var(--mut);font-size:.85em;padding:0 16px 30px}
   <!-- ===== ลอยกระทง ===== -->
   <section class="tab" id="tab-float">
     <div class="card" id="remind" hidden></div>
+    <div class="card" id="count" style="text-align:center"></div>
+    <div class="card" id="roomcard">
+      <h2>ห้องของโฟร์กับดาว 💞</h2>
+      <p class="mut" id="roomtxt"></p>
+      <p id="roomst" hidden></p>
+      <button class="btn" id="roomgo"></button>
+      <p class="mut" style="font-size:.8em;margin:10px 0 0">ข้อความถูกเข้ารหัสก่อนส่งผ่าน ntfy.sh เซิร์ฟเวอร์อ่านไม่ได้ และเก็บไว้แค่ราว 12 ชั่วโมง ถ้าอีกคนไม่ได้เปิดเว็บในช่วงนั้น ให้ใช้ปุ่มส่งลิงก์แบบเดิม</p>
+    </div>
     <div class="card build">
       <div class="prev" id="prev" aria-label="ตัวอย่างกระทง"></div>
       <div>
+        <div class="sws"><button class="btn" data-me="0">ฉันคือโฟร์</button><button class="btn" data-me="1">ฉันคือดาว</button></div>
         <div class="row2">
           <div><label for="nameA">ชื่อเรา</label><input id="nameA" maxlength="30" autocomplete="off"></div>
           <div><label for="nameB">ชื่อแฟน</label><input id="nameB" maxlength="30" autocomplete="off"></div>
         </div>
         <label>สีดอกไม้ของกระทง</label>
         <div class="sws" id="sws"></div>
+        <label>ฐานกระทง</label>
+        <div class="sws" id="bases"></div>
+        <label>ของประดับ</label>
+        <div class="sws" id="decos"></div>
         <label for="wishA">พรของเรา</label>
         <textarea id="wishA" maxlength="200" placeholder="ขออะไรดี… หรืออยากปล่อยอะไรไปกับสายน้ำ"></textarea>
         <button class="go" id="go">🕯️ ลอยกระทงของเรา</button>
@@ -211,6 +231,9 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const rnd=(a,b)=>a+Math.random()*(b-a);
 const KEY='loykrathong.v1',NAMES='loykrathong.names';
 const PAL={pink:['#ff8fb7','#ffd6e6','ชมพู'],lilac:['#a58cff','#e4dcff','ม่วงลาเวนเดอร์'],white:['#f3efff','#ffffff','ขาว'],sun:['#ffc24d','#fff0b3','เหลืองทอง']};
+const COUPLE=['โฟร์','ดาว'],ROOM='loykrathong.room',SND='loykrathong.sound';
+const BASE={banana:[['#ecd7a4','#d9bd82','#c9a96a'],'หยวกกล้วย'],bread:[['#f0b46a','#d98f3f','#b8722c'],'ขนมปัง (ปลากินได้)'],coconut:[['#8a5a3a','#6b4228','#523120'],'กะลามะพร้าว (แบบกระทงสาย จ.ตาก)']};
+const DECO={heart:['♥','#e86f98','หัวใจ'],star:['★','#ffd479','ดาว'],moon:['☾','#fff1c9','พระจันทร์'],none:['','','ไม่มี']};
 // ถ้าเบราว์เซอร์บล็อก localStorage (เช่น private mode) จะเก็บไว้ในหน้าเว็บชั่วคราวแทน
 const store=(()=>{try{localStorage.setItem('_t','1');return localStorage}catch{const m={};return{getItem:k=>m[k]??null,setItem:(k,v)=>{m[k]=String(v)}}}})();
 const load=()=>{try{const v=JSON.parse(store.getItem(KEY));return Array.isArray(v)?v:[]}catch{return[]}};
@@ -218,19 +241,19 @@ const save=v=>store.setItem(KEY,JSON.stringify(v));
 let toastT;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),4500)}
 
 /* ---------- กระทง (SVG) ---------- */
-function kSVG(c){
-  const [p,q]=PAL[c]||PAL.pink;
+function kSVG(r,px){
+  const [p,q]=PAL[r.c]||PAL.pink,[bt,bs,bb]=BASE[r.base]?BASE[r.base][0]:BASE.banana[0],dc=DECO[r.deco]||DECO.heart;
   let leaf='',pet='',inn='';
   for(let a=-66;a<=66;a+=22) leaf+=`<path transform="rotate(${a} 100 120)" d="M100 120C86 98 92 70 100 56C108 70 114 98 100 120Z" fill="#4fae6a" stroke="#2f8049" stroke-width="1.2"/>`;
   for(let a=-55;a<=55;a+=22){
     pet+=`<path transform="rotate(${a} 100 120)" d="M100 120C90 104 94 84 100 74C106 84 110 104 100 120Z" fill="${p}"/>`;
     inn+=`<path transform="rotate(${a} 100 120)" d="M100 120C95 108 97 94 100 88C103 94 105 108 100 120Z" fill="${q}"/>`;
   }
-  return `<svg viewBox="0 14 200 142" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="กระทง">
-  <ellipse cx="100" cy="134" rx="72" ry="17" fill="#c9a96a"/>
-  <rect x="28" y="120" width="144" height="14" fill="#d9bd82"/>
-  <ellipse cx="100" cy="120" rx="72" ry="17" fill="#ecd7a4"/>
-  <ellipse cx="100" cy="120" rx="52" ry="11" fill="none" stroke="#c9a96a" stroke-width="1.5"/>
+  return `<svg viewBox="0 14 200 142"${px?' width="200" height="142"':''} xmlns="http://www.w3.org/2000/svg" role="img" aria-label="กระทง">
+  <ellipse cx="100" cy="134" rx="72" ry="17" fill="${bb}"/>
+  <rect x="28" y="120" width="144" height="14" fill="${bs}"/>
+  <ellipse cx="100" cy="120" rx="72" ry="17" fill="${bt}"/>
+  <ellipse cx="100" cy="120" rx="52" ry="11" fill="none" stroke="${bb}" stroke-width="1.5"/>
   ${leaf}
   <path d="M84 114L70 54M116 114L130 54" stroke="#8a5a2b" stroke-width="2" stroke-linecap="round"/>
   <circle cx="70" cy="54" r="2.4" fill="#ff5a3c"/><circle cx="130" cy="54" r="2.4" fill="#ff5a3c"/>
@@ -238,7 +261,7 @@ function kSVG(c){
   ${pet}${inn}
   <path class="flame" d="M100 24C94 33 93 40 100 45C107 40 106 33 100 24Z" fill="#ffd45e"/>
   <path class="flame" d="M100 33C97.5 37 97.5 40 100 42C102.5 40 102.5 37 100 33Z" fill="#fff4c4"/>
-  <text x="100" y="131" text-anchor="middle" font-size="11" fill="#e86f98">♥</text>
+  ${dc[0]?`<text x="100" y="132" text-anchor="middle" font-size="13" fill="${dc[1]}">${dc[0]}</text>`:''}
   <circle cx="38" cy="124" r="4" fill="${p}"/><circle cx="46" cy="130" r="3" fill="${q}"/>
   <circle cx="162" cy="124" r="4" fill="${p}"/><circle cx="154" cy="130" r="3" fill="${q}"/>
   </svg>`;
@@ -250,11 +273,13 @@ $('#lanterns').innerHTML=Array.from({length:7},()=>`<div class="ln" style="--x:$
 
 // กระทงแบบเก่า (เวอร์ชันแรก) มีสองชื่อในดวงเดียว: a & b
 const who=r=>r.b?`${r.a} & ${r.b}`:r.a;
+// ดวงล่าสุดของแต่ละคน (ลอยซ้ำหลายรอบ กระทงของอีกคนจะไม่หลุดจากคู่)
+const perPerson=list=>[...new Map([...list].sort((a,b)=>a.t-b.t).map(r=>[who(r),r])).values()];
 const wishes=r=>`<p>💭 <b>${esc(r.a)}</b>: ${esc(r.wa||'—')}</p>`+(r.b?`<p>💭 <b>${esc(r.b)}</b>: ${esc(r.wb||'—')}</p>`:'');
 function kEl(r,cls,label){
   const d=document.createElement('div');
   d.className='k '+cls;d.style.setProperty('--x',rnd(8,80)+'%');
-  d.innerHTML=kSVG(r.c)+(label?`<small>${esc(label)}</small>`:'');return d;
+  d.innerHTML=kSVG(r)+(label?`<small>${esc(label)}</small>`:'');return d;
 }
 function renderRiver(){
   const river=$('#river'),y=new Date().getFullYear(),all=load().sort((a,b)=>b.t-a.t);
@@ -268,7 +293,7 @@ function renderRiver(){
     river.appendChild(d);
   });
   // กระทงปีนี้ของทั้งสองคน ลอยคู่กันแถวหน้า (สร้างใหม่ทุกครั้ง = เริ่มลอยจากฝั่งซ้ายใหม่)
-  const now=all.filter(r=>r.year===y).slice(0,4).reverse();
+  const now=perPerson(all.filter(r=>r.year===y)).slice(-4);
   if(now.length){
     const g=document.createElement('div');g.className='pair';g.style.bottom='6%';g.style.zIndex=200;
     now.forEach(r=>g.appendChild(kEl(r,'',who(r))));
@@ -277,15 +302,25 @@ function renderRiver(){
 }
 
 /* ---------- ฟอร์มทำกระทง ---------- */
-let color='pink';
+let color='pink',base='banana',deco='heart';
 $('#sws').innerHTML=Object.entries(PAL).map(([k,v])=>`<button class="sw" data-c="${k}" style="background:${v[0]}" aria-label="${v[2]}" aria-pressed="${k===color}"></button>`).join('');
-function drawPrev(){$('#prev').innerHTML=kSVG(color);$$('.sw').forEach(b=>b.setAttribute('aria-pressed',b.dataset.c===color))}
+$('#bases').innerHTML=Object.entries(BASE).map(([k,v])=>`<button class="opt" data-b="${k}">${v[1]}</button>`).join('');
+$('#decos').innerHTML=Object.entries(DECO).map(([k,v])=>`<button class="opt" data-d="${k}" aria-label="${v[2]}">${v[0]} ${v[2]}</button>`).join('');
+function drawPrev(){
+  $('#prev').innerHTML=kSVG({c:color,base,deco});
+  $$('.sw').forEach(b=>b.setAttribute('aria-pressed',b.dataset.c===color));
+  $$('[data-b]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.b===base));
+  $$('[data-d]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.d===deco));
+}
+$('#bases').onclick=e=>{const b=e.target.closest('[data-b]');if(b){base=b.dataset.b;drawPrev()}};
+$('#decos').onclick=e=>{const b=e.target.closest('[data-d]');if(b){deco=b.dataset.d;drawPrev()}};
+$$('[data-me]').forEach(b=>b.onclick=()=>{const i=+b.dataset.me;$('#nameA').value=COUPLE[i];$('#nameB').value=COUPLE[1-i];names()});
 $('#sws').onclick=e=>{const b=e.target.closest('.sw');if(b){color=b.dataset.c;drawPrev()}};
 try{const n=JSON.parse(store.getItem(NAMES)||'{}');$('#nameA').value=n.a||'';$('#nameB').value=n.b||''}catch{}
 function names(){
   const a=$('#nameA').value.trim(),b=$('#nameB').value.trim();
   store.setItem(NAMES,JSON.stringify({a,b}));
-  $('#sub').textContent=a&&b?`${a} & ${b} ✿ คืนวันเพ็ญ เดือน ๑๒`:'คืนวันเพ็ญ เดือน ๑๒ ✿';
+  $('#sub').textContent=a&&b?`${a} & ${b} ✿ คืนวันเพ็ญ เดือน ๑๒`:`${COUPLE[0]} & ${COUPLE[1]} ✿ คืนวันเพ็ญ เดือน ๑๒`;
 }
 $('#nameA').oninput=$('#nameB').oninput=names;names();
 
@@ -293,8 +328,8 @@ $('#go').onclick=()=>{
   const a=$('#nameA').value.trim(),b=$('#nameB').value.trim();
   if(!a){toast('ใส่ชื่อเราก่อนนะ');return}
   const t=Date.now();
-  const r={id:t.toString(36)+Math.random().toString(36).slice(2,6),t,year:new Date(t).getFullYear(),a,b:'',wa:$('#wishA').value.trim(),wb:'',c:color};
-  const all=load();all.push(r);save(all);
+  const r={id:t.toString(36)+Math.random().toString(36).slice(2,6),t,year:new Date(t).getFullYear(),a,b:'',wa:$('#wishA').value.trim(),wb:'',c:color,base,deco};
+  const all=load();all.push(r);save(all);plop();pub(r);
   renderRiver();renderMemory();renderRemind();
   $('#wishA').value='';
   window.scrollTo({top:0,behavior:'smooth'});
@@ -315,15 +350,17 @@ function renderMemory(){
   if(!all.length){$('#memlist').innerHTML='<div class="card" style="text-align:center">ยังไม่มีกระทงดวงแรก ไปลอยด้วยกันก่อนนะ 🪷</div>';return}
   let h='',y=null;
   for(const r of all){
-    if(r.year!==y){y=r.year;h+=`<h2 class="yr">ปี ${esc(y)} <span class="mut">(พ.ศ. ${esc(y+543)})</span></h2>`}
+    if(r.year!==y){y=r.year;h+=`<h2 class="yr">ปี ${esc(y)} <span class="mut">(พ.ศ. ${esc(y+543)})</span> <button class="btn" data-img="${esc(y)}">🖼️ เก็บเป็นภาพ</button></h2>`}
     const d=new Date(r.t).toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric'});
-    h+=`<div class="card mem"><div>${kSVG(r.c)}</div><div>
+    h+=`<div class="card mem"><div>${kSVG(r)}</div><div>
       <button class="btn del" data-del="${esc(r.id)}">ลบ</button>
       <h3>${esc(who(r))}</h3><p class="mut">${esc(d)}</p>${wishes(r)}</div></div>`;
   }
   $('#memlist').innerHTML=h;
 }
-$('#memlist').onclick=e=>{
+$('#memlist').onclick=async e=>{
+  const im=e.target.closest('[data-img]');
+  if(im){try{const y=+im.dataset.img,b=await yearPNG(y),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`loykrathong-${y}.png`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}catch{toast('สร้างภาพไม่สำเร็จ')}return}
   const b=e.target.closest('[data-del]');if(!b)return;
   if(!confirm('ลบความทรงจำดวงนี้? (ถ้าไม่มีไฟล์สำรอง จะกู้คืนไม่ได้)'))return;
   save(load().filter(r=>r.id!==b.dataset.del));renderMemory();renderRemind();renderRiver();
@@ -335,14 +372,14 @@ function merge(list){
   for(const r of Array.isArray(list)?list:[]){
     if(!r||typeof r!=='object'||!r.id||ids.has(String(r.id)))continue;
     const t=+r.t||Date.now();
-    const x={id:String(r.id).slice(0,40),t,year:+r.year||new Date(t).getFullYear(),a:String(r.a||'').slice(0,40),b:String(r.b||'').slice(0,40),wa:String(r.wa||'').slice(0,200),wb:String(r.wb||'').slice(0,200),c:PAL[r.c]?r.c:'pink'};
+    const x={id:String(r.id).slice(0,40),t,year:+r.year||new Date(t).getFullYear(),a:String(r.a||'').slice(0,40),b:String(r.b||'').slice(0,40),wa:String(r.wa||'').slice(0,200),wb:String(r.wb||'').slice(0,200),c:PAL[r.c]?r.c:'pink',base:BASE[r.base]?r.base:'banana',deco:DECO[r.deco]?r.deco:'heart'};
     cur.push(x);ids.add(x.id);added.push(x);
   }
   save(cur);renderMemory();renderRemind();renderRiver();return added;
 }
-async function share(list,msg){
-  const u=location.href.split('#')[0]+'#d='+btoa(unescape(encodeURIComponent(JSON.stringify(list))));
-  if(navigator.share){try{await navigator.share({title:'ลอยกระทงของเรา 🪷',text:'กระทงของเรามาลอยข้างๆ แล้วนะ 💕',url:u})}catch{}return}
+async function share(list,msg,url){
+  const u=url||location.href.split('#')[0]+'#d='+btoa(unescape(encodeURIComponent(JSON.stringify(list))));
+  if(navigator.share){try{await navigator.share({title:'ลอยกระทงของเรา 🪷',text:url?'ชวนมาลอยกระทงด้วยกัน 💞':'กระทงของเรามาลอยข้างๆ แล้วนะ 💕',url:u})}catch{}return}
   try{await navigator.clipboard.writeText(u);toast(msg)}catch{prompt('คัดลอกลิงก์นี้',u)}
 }
 $('#send').onclick=()=>{
@@ -384,7 +421,189 @@ $$('.tabs button').forEach(b=>b.onclick=()=>{
 const QS=['ปีนี้มีวันไหนที่ทำให้เรายิ้มได้มากที่สุด?','อะไรที่อยากปล่อยไปกับสายน้ำคืนนี้?','ปีหน้าอยากไปไหนด้วยกันมากที่สุด?','สิ่งเล็กๆ ที่เราทำให้กันแล้วชอบที่สุดคืออะไร?','อีก 5 ปีข้างหน้า อยากให้เราสองคนเป็นยังไง?','ความทรงจำแรกๆ ของเราที่ยังจำได้ชัดคืออะไร?','ถ้าขอพรให้อีกฝ่ายได้ข้อเดียว จะขออะไร?','ปีนี้ขอบคุณอะไรในตัวอีกฝ่ายที่สุด?','มื้ออาหารที่อร่อยที่สุดที่กินด้วยกันคือมื้อไหน?','อีก 10 ปี เปิดสมุดเล่มนี้แล้วอยากเห็นอะไร?'];
 $('#qbtn').onclick=()=>{$('#q').textContent=QS[Math.floor(Math.random()*QS.length)]};
 
-drawPrev();renderRiver();renderMemory();renderRemind();
+/* ---------- ห้องซิงก์ (เข้ารหัสปลายทาง ผ่าน ntfy.sh) ---------- */
+let room=store.getItem(ROOM)||'',K=null,es=null,roomOk=!!(window.crypto&&crypto.subtle);
+if(!/^[a-z0-9]{16}$/.test(room))room='';
+const enc=new TextEncoder(),sha=async s=>new Uint8Array(await crypto.subtle.digest('SHA-256',enc.encode(s)));
+const hex=u=>[...u].map(x=>x.toString(16).padStart(2,'0')).join('');
+async function roomKeys(code){
+  const t='lk-'+hex(await sha('loykrathong-topic:'+code)).slice(0,24);
+  return{t,k:await crypto.subtle.importKey('raw',await sha('loykrathong-key:'+code),'AES-GCM',false,['encrypt','decrypt'])};
+}
+async function seal(k,o){
+  const iv=crypto.getRandomValues(new Uint8Array(12)),ct=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv},k,enc.encode(JSON.stringify(o)))),b=new Uint8Array(12+ct.length);
+  b.set(iv);b.set(ct,12);return btoa(String.fromCharCode(...b));
+}
+async function unseal(k,s){
+  const b=Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+  return JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:b.slice(0,12)},k,b.slice(12))));
+}
+const getK=()=>K||(K=roomKeys(room));
+let pubWarned=false;
+async function pub(r){
+  if(!room||!roomOk)return;
+  try{
+    const {t,k}=await getK(),res=await fetch('https://ntfy.sh/'+t,{method:'POST',body:await seal(k,r)});
+    if(!res.ok)throw 0;
+  }catch{if(!pubWarned){pubWarned=true;toast('ส่งไปให้แฟนอัตโนมัติไม่สำเร็จ ใช้ปุ่มส่งลิงก์แทนได้')}}
+}
+function setSt(t){$('#roomst').textContent=t}
+async function startSync(){
+  if(!room||!roomOk||es)return;
+  setSt('กำลังเชื่อม…');
+  const {t,k}=await getK();let first=true;
+  es=new EventSource('https://ntfy.sh/'+t+'/sse?since=all');
+  es.onopen=()=>{
+    setSt('เชื่อมกันอยู่ ✓');
+    if(first){first=false;load().filter(r=>r.year===new Date().getFullYear()).sort((a,b)=>b.t-a.t).slice(0,4).forEach(pub)}
+  };
+  es.onerror=()=>setSt('หลุดการเชื่อมต่อ ใช้ปุ่มส่งลิงก์แทนได้');
+  es.onmessage=async e=>{
+    try{
+      const d=JSON.parse(e.data);if(d.event!=='message')return;
+      const got=merge([await unseal(k,d.message)]);
+      if(got.length){toast(`กระทงของ ${got[0].a} ลอยมาหาแล้ว 💕`);plop()}
+    }catch{}
+  };
+}
+function renderRoom(){
+  $('#roomtxt').textContent=!roomOk?'เบราว์เซอร์นี้ยังไม่รองรับห้องซิงก์ ใช้ปุ่มส่งลิงก์แทนได้นะ':room?'ลอยเสร็จแล้วกระทงจะลอยไปหาอีกคนเองทันที':'ทำครั้งเดียว ส่งลิงก์ให้อีกคนเปิด แล้วต่อไปกระทงจะลอยไปหากันเองทันที';
+  $('#roomst').hidden=!room||!roomOk;
+  $('#roomgo').hidden=!roomOk;
+  $('#roomgo').textContent=room?'ส่งลิงก์ชวนอีกครั้ง':'สร้างห้องของเรา';
+}
+$('#roomgo').onclick=()=>{
+  if(!room){
+    room=Array.from(crypto.getRandomValues(new Uint8Array(16)),b=>'abcdefghijklmnopqrstuvwxyz0123456789'[b%36]).join('');
+    store.setItem(ROOM,room);K=null;renderRoom();startSync();
+  }
+  share(null,'คัดลอกลิงก์ชวนแล้ว ส่งให้อีกคนเปิดได้เลย 💞',location.href.split('#')[0]+'#room='+room);
+};
+if(location.hash.startsWith('#room=')){
+  const c=location.hash.slice(6);
+  if(!/^[a-z0-9]{16}$/.test(c))toast('ลิงก์ห้องเสีย อ่านไม่ได้');
+  else if(c!==room&&confirm('เข้าห้องลอยกระทงของโฟร์กับดาวไหม? 💞')){room=c;K=null;store.setItem(ROOM,c)}
+  history.replaceState(null,'',location.pathname+location.search);
+}
+
+/* ---------- เสียง (Web Audio ล้วน ไม่มีไฟล์) ---------- */
+let ac,master,echo,musicT,soundOn=store.getItem(SND)==='1';
+function audio(){
+  if(ac)return ac;
+  ac=new(window.AudioContext||window.webkitAudioContext)();
+  master=ac.createGain();master.gain.value=.08;master.connect(ac.destination);
+  echo=ac.createDelay(1);const fb=ac.createGain();echo.delayTime.value=.35;fb.gain.value=.3;
+  echo.connect(fb);fb.connect(echo);echo.connect(master);
+  const buf=ac.createBuffer(1,ac.sampleRate*2,ac.sampleRate),ch=buf.getChannelData(0);
+  for(let i=0;i<ch.length;i++)ch[i]=Math.random()*2-1;
+  const n=ac.createBufferSource(),lp=ac.createBiquadFilter(),g=ac.createGain(),lfo=ac.createOscillator(),lg=ac.createGain();
+  n.buffer=buf;n.loop=true;lp.type='lowpass';lp.frequency.value=500;g.gain.value=.04;
+  lfo.frequency.value=.12;lg.gain.value=.015;lfo.connect(lg);lg.connect(g.gain);
+  n.connect(lp);lp.connect(g);g.connect(ac.destination);n.start();lfo.start();
+  return ac;
+}
+const NOTES=[523.25,587.33,659.25,783.99,880];
+function note(){
+  const f=NOTES[Math.floor(Math.random()*5)]*(Math.random()<.25?.5:1),t=ac.currentTime,g=ac.createGain();
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.6,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+1.5);
+  g.connect(master);g.connect(echo);
+  ['sine','triangle'].forEach(ty=>{const o=ac.createOscillator();o.type=ty;o.frequency.value=f;o.connect(g);o.start(t);o.stop(t+1.6)});
+}
+function loop(){clearTimeout(musicT);if(!soundOn)return;note();musicT=setTimeout(loop,rnd(700,1400))}
+function plop(){
+  if(!soundOn||!ac)return;
+  const t=ac.currentTime,o=ac.createOscillator(),g=ac.createGain();
+  o.frequency.setValueAtTime(600,t);o.frequency.exponentialRampToValueAtTime(150,t+.25);
+  g.gain.setValueAtTime(.25,t);g.gain.exponentialRampToValueAtTime(.0001,t+.25);
+  o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+.26);
+}
+const resumeL=e=>{if(!e.target.closest('#snd'))setSound(true)};
+function setSound(on){
+  document.removeEventListener('pointerdown',resumeL,true);
+  soundOn=on;store.setItem(SND,on?'1':'0');
+  try{
+    if(on){audio();ac.resume();loop()}else{clearTimeout(musicT);if(ac)ac.suspend()}
+  }catch{soundOn=false}
+  $('#snd').textContent=soundOn?'🔊 ปิดเสียง':'🔈 เปิดเสียง';$('#snd').setAttribute('aria-pressed',soundOn);
+}
+$('#snd').onclick=()=>setSound(!soundOn);
+// เสียงที่เคยเปิดไว้ เริ่มเล่นได้ต่อเมื่อผู้ใช้แตะหน้าเว็บ (ข้อจำกัด autoplay)
+if(soundOn){$('#snd').textContent='🔊 ปิดเสียง';$('#snd').setAttribute('aria-pressed',true);document.addEventListener('pointerdown',resumeL,true)}
+
+/* ---------- แตะท้องฟ้า = ปล่อยโคม ---------- */
+$('.hero').addEventListener('click',e=>{
+  if(e.target.closest('button'))return;
+  const r=e.currentTarget.getBoundingClientRect(),y=e.clientY-r.top;
+  if(y>r.height*.6||matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+  const L=$('#lanterns');
+  while(L.querySelectorAll('.tl').length>=15)L.querySelector('.tl').remove();
+  const d=document.createElement('div');d.className='ln tl';
+  d.style.cssText=`left:${e.clientX-r.left-7}px;top:${y-9}px;bottom:auto;--sw:${rnd(-30,30)}px`;
+  d.onanimationend=()=>d.remove();L.appendChild(d);
+});
+
+/* ---------- นับถอยหลัง ---------- */
+const LK=['2026-11-24','2027-11-14','2028-11-02','2029-11-21'];
+function renderCount(now=new Date()){
+  const td=new Date(now.getFullYear(),now.getMonth(),now.getDate()),el=$('#count');
+  for(const s of LK){
+    const [y,m,d]=s.split('-').map(Number),dt=new Date(y,m-1,d),n=Math.round((dt-td)/864e5);
+    if(n<0)continue;
+    if(n===0){el.innerHTML='<h2>วันนี้วันลอยกระทง 🪷</h2>';return}
+    const ds=dt.toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric'});
+    el.innerHTML=`<h2>อีก ${n} วันถึงลอยกระทง${y>td.getFullYear()?'ปีหน้า':'ปีนี้'} · ${esc(ds)}</h2>`+(s==='2026-11-24'?'':'<p class="mut" style="margin:4px 0 0">(วันที่ประมาณการ เช็กปฏิทินอีกทีนะ)</p>');
+    return;
+  }
+  el.innerHTML='<h2>ยังไม่มีวันที่ของปีหน้า เดี๋ยวเช็กปฏิทินแล้วมาอัปเดตนะ</h2>';
+}
+
+/* ---------- เก็บเป็นภาพประจำปี ---------- */
+function wrapTh(g,text,max){
+  let seg=window.Intl&&Intl.Segmenter?[...new Intl.Segmenter('th',{granularity:'word'}).segment(text)].map(x=>x.segment):[...text];
+  seg=seg.flatMap(w=>g.measureText(w).width>max?[...w]:[w]);
+  const lines=[];let cur='';
+  for(const w of seg){
+    if(cur&&g.measureText(cur+w).width>max){lines.push(cur.trimEnd());cur=w.trimStart()}else cur+=w;
+  }
+  if(cur)lines.push(cur);return lines;
+}
+async function yearPNG(y){
+  const rs=perPerson(load().filter(r=>r.year===y));
+  await document.fonts.ready;
+  const W=1080,H=1350,c=document.createElement('canvas');c.width=W;c.height=H;
+  const g=c.getContext('2d'),F='Mali,"Noto Sans Thai",sans-serif';
+  let gr=g.createLinearGradient(0,0,0,520);gr.addColorStop(0,'#150f3d');gr.addColorStop(.7,'#2d2275');gr.addColorStop(1,'#8a4f9e');
+  g.fillStyle=gr;g.fillRect(0,0,W,520);
+  gr=g.createLinearGradient(0,520,0,H);gr.addColorStop(0,'#1d1650');gr.addColorStop(1,'#120d33');
+  g.fillStyle=gr;g.fillRect(0,520,W,H-520);
+  g.fillStyle='#fff';
+  for(let i=0;i<70;i++){g.globalAlpha=rnd(.3,1);g.beginPath();g.arc(rnd(0,W),rnd(0,500),rnd(.8,2.4),0,7);g.fill()}
+  g.globalAlpha=1;g.shadowColor='rgba(255,235,170,.7)';g.shadowBlur=50;g.fillStyle='#ffeeb8';
+  g.beginPath();g.arc(990,92,42,0,7);g.fill();g.shadowBlur=0;
+  g.textAlign='center';g.textBaseline='alphabetic';
+  g.fillStyle='#fff1c9';g.font=`600 56px ${F}`;g.fillText(`ลอยกระทงปี ${y} · พ.ศ. ${y+543}`,W/2,190);
+  const nm=[...new Set(rs.flatMap(r=>[r.a,r.b]).filter(Boolean))].join(' & ');
+  g.fillStyle='#ffd479';g.font=`600 38px ${F}`;
+  wrapTh(g,nm,900).slice(0,2).forEach((l,i)=>g.fillText(l,W/2,260+i*50));
+  const ks=rs.slice(0,5),n=ks.length,w=Math.min(300,(W-100)/Math.max(n,1)),h=w*142/200;
+  for(let i=0;i<n;i++){
+    const img=new Image();
+    await new Promise((ok,no)=>{img.onload=ok;img.onerror=no;img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(kSVG(ks[i],true))});
+    g.drawImage(img,(W-n*w)/2+i*w,610-h,w,h);
+  }
+  g.textAlign='left';g.fillStyle='#f4efff';g.font=`400 30px ${F}`;
+  let ty=720;
+  outer:for(const r of rs){
+    for(const [p,t] of [[r.a,r.wa],[r.b,r.wb]]){
+      if(!p)continue;
+      for(const l of wrapTh(g,`${p}: ${t||'—'}`,920)){if(ty>H-50)break outer;g.fillText(l,80,ty);ty+=44}
+      ty+=12;
+    }
+  }
+  return new Promise(res=>c.toBlob(res,'image/png'));
+}
+
+drawPrev();renderRiver();renderMemory();renderRemind();renderCount();renderRoom();startSync();
 </script>
 </body>
 </html>
