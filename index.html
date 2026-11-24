@@ -236,7 +236,8 @@ const COUPLE=['โฟร์','ดาว'],ROOM='loykrathong.room',SND='loykratho
 const BASE={banana:[['#ecd7a4','#d9bd82','#c9a96a'],'หยวกกล้วย'],bread:[['#f0b46a','#d98f3f','#b8722c'],'ขนมปัง (ปลากินได้)'],coconut:[['#8a5a3a','#6b4228','#523120'],'กะลามะพร้าว (แบบกระทงสาย จ.ตาก)']};
 const DECO={heart:['♥','#e86f98','หัวใจ'],star:['★','#ffd479','ดาว'],moon:['☾','#fff1c9','พระจันทร์'],none:['','','ไม่มี']};
 // ถ้าเบราว์เซอร์บล็อก localStorage (เช่น private mode) จะเก็บไว้ในหน้าเว็บชั่วคราวแทน
-const store=(()=>{try{localStorage.setItem('_t','1');return localStorage}catch{const m={};return{getItem:k=>m[k]??null,setItem:(k,v)=>{m[k]=String(v)}}}})();
+const TEST=/[?&]test\b/.test(location.search); // ?test = รันเทสต์ในที่เก็บชั่วคราว ไม่แตะข้อมูลจริง
+const store=(()=>{try{if(TEST)throw 0;localStorage.setItem('_t','1');return localStorage}catch{const m={};return{getItem:k=>m[k]??null,setItem:(k,v)=>{m[k]=String(v)}}}})();
 const load=()=>{try{const v=JSON.parse(store.getItem(KEY));return Array.isArray(v)?v:[]}catch{return[]}};
 const save=v=>store.setItem(KEY,JSON.stringify(v));
 let toastT;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),4500)}
@@ -625,6 +626,38 @@ async function yearPNG(y){
 }
 
 drawPrev();renderRiver();renderMemory();renderRemind();renderCount();renderRoom();renderKeep();startSync();
+
+/* ---------- เทสต์ตัวเอง: เปิดเว็บด้วย ?test ---------- */
+async function selfTest(){
+  const fails=[],ok=(c,m)=>{if(!c)fails.push(m)};
+  save([]);store.setItem(DEL,'[]');
+  // 1) ข้อมูลแปลกจากลิงก์/ไฟล์ถูกตีกลับเป็นค่าเริ่มต้น และไม่รันโค้ด
+  const evil='"><img src=x onerror="window.__xss=1">';
+  const [x]=merge([{id:'e1',t:1,year:2026,a:evil,wa:evil,c:evil,base:evil,deco:evil}]);
+  ok(x.c==='pink'&&x.base==='banana'&&x.deco==='heart','bad c/base/deco not reset');
+  ok(!$('#memlist img')&&!$('#river img'),'XSS: <img> got into the page');
+  // 2) เข้ารหัสลิงก์ #d= แล้วถอดได้ข้อมูลเดิม (ภาษาไทย+อีโมจิ)
+  const r={id:'t1',t:2,year:2026,a:'ดาว',wa:'ขอให้เรียนจบ 💕',c:'lilac',base:'coconut',deco:'star'};
+  const back=JSON.parse(decodeURIComponent(escape(atob(btoa(unescape(encodeURIComponent(JSON.stringify([r]))))))))[0];
+  ok(JSON.stringify(back)===JSON.stringify(r),'#d= link round trip changed data');
+  // 3) merge ซ้ำไม่เพิ่มดวงซ้ำ (รวม id ยาว)
+  ok(merge([r]).length===1&&merge([r]).length===0,'duplicate merge');
+  const L={id:'x'.repeat(60),t:3,year:2026,a:'q'};merge([L]);ok(merge([L]).length===0,'long id duplicated');
+  // 4) ลบแล้วลิงก์เอากลับมาไม่ได้ แต่ไฟล์สำรองกู้ได้
+  window.confirm=()=>true;$(`[data-del="t1"]`).click();
+  ok(merge([r]).length===0,'deleted krathong came back via link');
+  ok(merge([r],true).length===1,'backup restore failed');
+  // 5) กระทงคู่บนแม่น้ำ = ดวงล่าสุดของแต่ละคน
+  save([]);merge([{id:'f1',t:1,year:2026,a:'โฟร์'},{id:'d1',t:2,year:2026,a:'ดาว'},{id:'f2',t:3,year:2026,a:'โฟร์'},{id:'f3',t:4,year:2026,a:'โฟร์'}]);
+  ok(perPerson(load().filter(q=>q.year===2026)).map(q=>q.id).join()==='f3,d1','pair should be latest per person');
+  // 6) เข้ารหัสห้องซิงก์ แล้วถอดได้ข้อมูลเดิม (ต้องเป็น https)
+  if(roomOk){const {k}=await roomKeys('abcdefghijklmnop'),s=await seal(k,r);ok(!s.includes('ดาว')&&JSON.stringify(await unseal(k,s))===JSON.stringify(r),'room encryption round trip')}
+  ok(!window.__xss,'XSS ran');
+  save([]);renderMemory();renderRiver();renderRemind();
+  const msg=fails.length?'❌ เทสต์ไม่ผ่าน: '+fails.join(' | '):`✅ เทสต์ผ่านหมด${roomOk?'':' (ข้ามเทสต์เข้ารหัส: ไม่ใช่ https)'}`;
+  console.log(msg);toast(msg);return fails;
+}
+if(TEST)selfTest();
 </script>
 </body>
 </html>
